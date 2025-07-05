@@ -81,88 +81,88 @@ public class Customer {
         this.setPhone(phone);
     }
 
-    private UUID getId() {
+    public UUID id() {
         return id;
+    }
+
+    public String fullName() {
+        return fullName;
+    }
+
+    public LocalDate birthDate() {
+        return birthDate;
+    }
+
+    public String email() {
+        return email;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public String document() {
+        return document;
+    }
+
+    public Boolean isPromotionNotificationsAllowed() {
+        return promotionNotificationsAllowed;
+    }
+
+    public Boolean isArchived() {
+        return archived;
+    }
+
+    public OffsetDateTime registeredAt() {
+        return registeredAt;
+    }
+
+    public OffsetDateTime archivedAt() {
+        return archivedAt;
+    }
+
+    public Integer loyaltyPoints() {
+        return loyaltyPoints;
     }
 
     private void setId(UUID id) {
         this.id = id;
     }
 
-    private String getFullName() {
-        return fullName;
-    }
-
     private void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    private LocalDate getBirthDate() {
-        return birthDate;
     }
 
     private void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
-    private String getEmail() {
-        return email;
-    }
-
     private void setEmail(String email) {
         this.email = email;
-    }
-
-    private String getPhone() {
-        return phone;
     }
 
     private void setPhone(String phone) {
         this.phone = phone;
     }
 
-    private String getDocument() {
-        return document;
-    }
-
     private void setDocument(String document) {
         this.document = document;
-    }
-
-    private Boolean getPromotionNotificationsAllowed() {
-        return promotionNotificationsAllowed;
     }
 
     private void setPromotionNotificationsAllowed(Boolean promotionNotificationsAllowed) {
         this.promotionNotificationsAllowed = promotionNotificationsAllowed;
     }
 
-    private Boolean getArchived() {
-        return archived;
-    }
-
     private void setArchived(Boolean archived) {
         this.archived = archived;
-    }
-
-    private OffsetDateTime getRegisteredAt() {
-        return registeredAt;
     }
 
     private void setRegisteredAt(OffsetDateTime registeredAt) {
         this.registeredAt = registeredAt;
     }
 
-    private OffsetDateTime getArchivedAt() {
-        return archivedAt;
-    }
-
     private void setArchivedAt(OffsetDateTime archivedAt) {
         this.archivedAt = archivedAt;
-    }
-
-    private Integer getLoyaltyPoints() {
-        return loyaltyPoints;
     }
 
     private void setLoyaltyPoints(Integer loyaltyPoints) {
