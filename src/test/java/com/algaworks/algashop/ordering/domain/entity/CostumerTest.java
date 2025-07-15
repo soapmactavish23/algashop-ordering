@@ -71,6 +71,45 @@ public class CostumerTest {
     }
 
     @Test
+    void given_brandNewCustomer_whenAddLoyatyPoints_sholdSumPoints() {
+        Customer customer =  new Customer(
+                IdGenerator.generateTimeBasedUUID(),
+                "Jonh Doe",
+                LocalDate.of(1991, 7, 5),
+                "jonh.doe@email.com",
+                "478-256-2504",
+                "255-08-0578",
+                false,
+                OffsetDateTime.now()
+        );
+
+        customer.addLoyaltyPoints(10);
+        customer.addLoyaltyPoints(20);
+
+        Assertions.assertThat(customer.loyaltyPoints()).isEqualTo(30);
+    }
+
+    @Test
+    void given_brandNewCustomer_whenAddInvalidLoyatyPoints_sholdGenerateException() {
+        Customer customer =  new Customer(
+                IdGenerator.generateTimeBasedUUID(),
+                "Jonh Doe",
+                LocalDate.of(1991, 7, 5),
+                "jonh.doe@email.com",
+                "478-256-2504",
+                "255-08-0578",
+                false,
+                OffsetDateTime.now()
+        );
+
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> customer.addLoyaltyPoints(0));
+
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> customer.addLoyaltyPoints(10));
+    }
+
+    @Test
     void given_archivedCustomer_whenTryToUpdate_shouldGenerateException() {
         Customer customer =  new Customer(
                 IdGenerator.generateTimeBasedUUID(),

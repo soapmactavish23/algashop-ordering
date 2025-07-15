@@ -3,10 +3,6 @@ package com.algaworks.algashop.ordering.domain.entity;
 import com.algaworks.algashop.ordering.domain.exceptions.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.exceptions.ErrorMessages;
 import com.algaworks.algashop.ordering.domain.validator.FieldValidations;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.apache.commons.validator.routines.EmailValidator;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -57,8 +53,12 @@ public class Customer {
         this.setLoyaltyPoints(loyaltyPoints);
     }
 
-    public void addLoayltyPoints(Integer points) {
-
+    public void addLoyaltyPoints(Integer loyatyPointsAdded) {
+        verifyIfChangeable();
+        if(loyaltyPoints <= 0) {
+            throw new IllegalArgumentException();
+        }
+        this.setLoyaltyPoints(this.loyaltyPoints() + loyatyPointsAdded);
     }
 
     public void archive() {
@@ -208,6 +208,9 @@ public class Customer {
 
     private void setLoyaltyPoints(Integer loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
+        if(loyaltyPoints < 0) {
+            throw new IllegalArgumentException();
+        }
         this.loyaltyPoints = loyaltyPoints;
     }
 
