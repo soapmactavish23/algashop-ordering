@@ -121,6 +121,11 @@ public class Order {
         this.changeStatus(OrderStatus.PLACED);
     }
 
+    public void markAsPaid() {
+        this.setPaidAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.PAID);
+    }
+
     public void changePaymentMethod(PaymentMethod paymentMethod) {
         Objects.requireNonNull(paymentMethod);
         this.setPaymentMethod(paymentMethod);
@@ -131,7 +136,7 @@ public class Order {
         this.setBilling(billing);
     }
 
-    public void chagneShipping(ShippingInfo shipping, Money shippingCost, LocalDate expectedDeliveryDate) {
+    public void changeShipping(ShippingInfo shipping, Money shippingCost, LocalDate expectedDeliveryDate) {
         Objects.requireNonNull(shipping);
         Objects.requireNonNull(shippingCost);
         Objects.requireNonNull(expectedDeliveryDate);
@@ -151,6 +156,10 @@ public class Order {
 
     public boolean isPlaced() {
         return OrderStatus.PLACED.equals(this.status());
+    }
+
+    public boolean isPaid() {
+        return OrderStatus.PAID.equals(this.status());
     }
 
     public OrderId id() {

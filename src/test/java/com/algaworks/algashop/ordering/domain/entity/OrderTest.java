@@ -88,16 +88,24 @@ class OrderTest {
 
     @Test
     public void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
-        Order order = Order.draft(new CustomerId());
+        Order order = OrderTestDataBuilder.anOrder().build();
         order.place();
         Assertions.assertThat(order.isPlaced()).isTrue();
     }
 
     @Test
+    public void givenPlacedOrder_whenMarkAsPaid_shouldChangeToPaid() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        order.markAsPaid();
+        Assertions.assertThat(order.isPaid()).isTrue();
+        Assertions.assertThat(order.paidAt()).isNotNull();
+    }
+
+    @Test
     public void givenPlaceOrder_whenTryToPlace_shouldGenerateException() {
-        Order order = Order.draft(new CustomerId());
-        order.place();
-        Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class).isThrownBy(order::place);
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
+                .isThrownBy(order::place);
     }
 
     @Test
@@ -160,7 +168,7 @@ class OrderTest {
         Money shippingCost = Money.ZERO;
         LocalDate expectedDeliveryDate = LocalDate.now().plusDays(1);
 
-        order.chagneShipping(shippingInfo, shippingCost, expectedDeliveryDate);
+        order.changeShipping(shippingInfo, shippingCost, expectedDeliveryDate);
 
         Assertions.assertWith(order,
                 o -> Assertions.assertThat(o.shipping()).isEqualTo(shippingInfo),
@@ -191,7 +199,7 @@ class OrderTest {
         LocalDate expectedDeliveryDate = LocalDate.now().minusDays(1);
 
         Assertions.assertThatExceptionOfType(OrderInvalidShippingDeliveryDateException.class)
-                .isThrownBy(() -> order.chagneShipping(shippingInfo, shippingCost, expectedDeliveryDate));
+                .isThrownBy(() -> order.changeShipping(shippingInfo, shippingCost, expectedDeliveryDate));
     }
 
 }
