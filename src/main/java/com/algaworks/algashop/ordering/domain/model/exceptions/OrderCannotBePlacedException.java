@@ -12,7 +12,7 @@ public class OrderCannotBePlacedException extends DomainException {
 
     public static OrderCannotBePlacedException noItems(OrderId id) {
         return new OrderCannotBePlacedException(
-                String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NOT_ITEMS, id));
+                String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_ITEMS, id));
     }
 
     public static OrderCannotBePlacedException noShippingInfo(OrderId id) {

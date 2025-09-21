@@ -1,9 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.entity;
 
-import com.algaworks.algashop.ordering.domain.model.exceptions.OrderCannotBePlacedException;
-import com.algaworks.algashop.ordering.domain.model.exceptions.OrderDoesNotContainOrderItemException;
-import com.algaworks.algashop.ordering.domain.model.exceptions.OrderInvalidShippingDeliveryDateException;
-import com.algaworks.algashop.ordering.domain.model.exceptions.OrderStatusCannotBeChangedException;
+import com.algaworks.algashop.ordering.domain.model.exceptions.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
@@ -18,7 +15,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Order {
+public class Order implements AggregateRoot<OrderId> {
 
     private OrderId id;
     private CustomerId customerId;
@@ -84,6 +81,8 @@ public class Order {
         Objects.requireNonNull(product);
         Objects.requireNonNull(quantity);
 
+        this.verifyIfChangeable();
+
         product.checkOutOfStock();
 
         OrderItem orderItem = OrderItem.brandNew()
@@ -92,7 +91,7 @@ public class Order {
                 .product(product)
                 .build();
 
-        if(this.items == null) {
+        if (this.items == null) {
             this.items = new HashSet<>();
         }
 
@@ -103,27 +102,36 @@ public class Order {
 
     public void place() {
         this.verifyIfCanChangeToPlaced();
-        this.setPlacedAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.PLACED);
+        this.setPlacedAt(OffsetDateTime.now());
     }
 
     public void markAsPaid() {
-        this.setPaidAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.PAID);
+        this.setPaidAt(OffsetDateTime.now());
+    }
+
+    public void markAsReady() {
+        this.changeStatus(OrderStatus.READY);
+        this.setReadyAt(OffsetDateTime.now());
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
         Objects.requireNonNull(paymentMethod);
+        this.verifyIfChangeable();
         this.setPaymentMethod(paymentMethod);
     }
 
     public void changeBilling(Billing billing) {
         Objects.requireNonNull(billing);
+        this.verifyIfChangeable();
         this.setBilling(billing);
     }
 
     public void changeShipping(Shipping newShipping) {
         Objects.requireNonNull(newShipping);
+
+        this.verifyIfChangeable();
 
         if (newShipping.expectedDate().isBefore(LocalDate.now())) {
             throw new OrderInvalidShippingDeliveryDateException(this.id());
@@ -136,10 +144,27 @@ public class Order {
         Objects.requireNonNull(orderItemId);
         Objects.requireNonNull(quantity);
 
+        this.verifyIfChangeable();
+
         OrderItem orderItem = this.findOrderItem(orderItemId);
         orderItem.changeQuantity(quantity);
 
         this.recalculateTotals();
+    }
+
+    public void removeItem(OrderItemId orderItemId) {
+        Objects.requireNonNull(orderItemId);
+        this.verifyIfChangeable();
+
+        OrderItem orderItem = findOrderItem(orderItemId);
+        this.items.remove(orderItem);
+
+        this.recalculateTotals();
+    }
+
+    public void cancel() {
+        this.setCanceledAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.CANCELED);
     }
 
     public boolean isDraft() {
@@ -152,6 +177,14 @@ public class Order {
 
     public boolean isPaid() {
         return OrderStatus.PAID.equals(this.status());
+    }
+
+    public boolean isReady() {
+        return OrderStatus.READY.equals(this.status());
+    }
+
+    public boolean isCanceled() {
+        return OrderStatus.CANCELED.equals(this.status());
     }
 
     public OrderId id() {
@@ -207,20 +240,20 @@ public class Order {
     }
 
     private void recalculateTotals() {
-        BigDecimal totalItemsAmout = this.items().stream().map(i -> i.totalAmount().value())
+        BigDecimal totalItemsAmount = this.items().stream().map(i -> i.totalAmount().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Integer totalItemsQuantity = this.items.stream().map(i -> i.quantity().value())
+        Integer totalItemsQuantity = this.items().stream().map(i -> i.quantity().value())
                 .reduce(0, Integer::sum);
 
         BigDecimal shippingCost;
         if(this.shipping() == null) {
             shippingCost = BigDecimal.ZERO;
         } else {
-            shippingCost = this.shipping.cost().value();
+            shippingCost = this.shipping().cost().value();
         }
 
-        BigDecimal totalAmount = totalItemsAmout.add(shippingCost);
+        BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
 
         this.setTotalAmount(new Money(totalAmount));
         this.setTotalItems(new Quantity(totalItemsQuantity));
@@ -228,7 +261,7 @@ public class Order {
 
     private void changeStatus(OrderStatus newStatus) {
         Objects.requireNonNull(newStatus);
-        if(this.status().canNotChangeTo(newStatus)) {
+        if (this.status().canNotChangeTo(newStatus)) {
             throw new OrderStatusCannotBeChangedException(this.id(), this.status(), newStatus);
         }
         this.setStatus(newStatus);
@@ -254,7 +287,13 @@ public class Order {
         return this.items().stream()
                 .filter(i -> i.id().equals(orderItemId))
                 .findFirst()
-                .orElseThrow(() -> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
+                .orElseThrow(()-> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
+    }
+
+    private void verifyIfChangeable() {
+        if (!this.isDraft()) {
+            throw new OrderCannotBeEditedException(this.id(), this.status());
+        }
     }
 
     private void setId(OrderId id) {
@@ -326,4 +365,5 @@ public class Order {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }
