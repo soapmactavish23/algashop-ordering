@@ -1,9 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -17,15 +14,14 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString(of = "id")
 @Table(name = "\"order\"")
-@EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EntityListeners(AuditingEntityListener.class)
 public class OrderPersistenceEntity {
-
     @Id
     @EqualsAndHashCode.Include
     private Long id;
@@ -50,5 +46,7 @@ public class OrderPersistenceEntity {
     @LastModifiedBy
     private UUID lastModifiedByUserId;
 
+    @Version
+    private Long version;
 
 }
