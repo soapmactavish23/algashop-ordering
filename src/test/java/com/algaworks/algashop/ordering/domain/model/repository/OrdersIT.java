@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ class OrdersIT {
     }
 
     @Test
-    void shouldPersistAndFind() {
+    public void shouldPersistAndFind() {
         Order originalOrder = OrderTestDataBuilder.anOrder().build();
         OrderId orderId = originalOrder.id();
         orders.add(originalOrder);
@@ -57,7 +58,7 @@ class OrdersIT {
     }
 
     @Test
-    void shouldUpdateExistingOrder() {
+    public void shouldUpdateExistingOrder() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         orders.add(order);
 
@@ -69,29 +70,30 @@ class OrdersIT {
         order = orders.ofId(order.id()).orElseThrow();
 
         Assertions.assertThat(order.isPaid()).isTrue();
+
     }
 
-//    @Test
-//    void shouldNotAllowStaleUpdates() {
-//        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
-//        orders.add(order);
-//
-//        Order orderT1 = orders.ofId(order.id()).orElseThrow();
-//        Order orderT2 = orders.ofId(order.id()).orElseThrow();
-//
-//        orderT1.markAsPaid();
-//        orders.add(orderT1);
-//
-//        orderT2.cancel();
-//
-//        Assertions.assertThatExceptionOfType(ObjectOptimisticLockingFailureException.class)
-//                .isThrownBy(()-> orders.add(orderT2));
-//
-//        Order savedOrder = orders.ofId(order.id()).orElseThrow();
-//
-//        Assertions.assertThat(savedOrder.canceledAt()).isNull();
-//        Assertions.assertThat(savedOrder.paidAt()).isNotNull();
-//
-//    }
+    @Test
+    public void shouldNotAllowStaleUpdates() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        orders.add(order);
+
+        Order orderT1 = orders.ofId(order.id()).orElseThrow();
+        Order orderT2 = orders.ofId(order.id()).orElseThrow();
+
+        orderT1.markAsPaid();
+        orders.add(orderT1);
+
+        orderT2.cancel();
+
+        Assertions.assertThatExceptionOfType(ObjectOptimisticLockingFailureException.class)
+                .isThrownBy(()-> orders.add(orderT2));
+
+        Order savedOrder = orders.ofId(order.id()).orElseThrow();
+
+        Assertions.assertThat(savedOrder.canceledAt()).isNull();
+        Assertions.assertThat(savedOrder.paidAt()).isNotNull();
+
+    }
 
 }

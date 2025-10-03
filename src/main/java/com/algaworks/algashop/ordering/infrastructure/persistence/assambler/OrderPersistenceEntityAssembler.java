@@ -18,7 +18,8 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setTotalItems(order.totalItems().value());
         orderPersistenceEntity.setStatus(order.status().name());
         orderPersistenceEntity.setPaymentMethod(order.paymentMethod().name());
-        orderPersistenceEntity.setPlacedAt(order.paidAt());
+        orderPersistenceEntity.setPlacedAt(order.placedAt());
+        orderPersistenceEntity.setPaidAt(order.paidAt());
         orderPersistenceEntity.setCanceledAt(order.canceledAt());
         orderPersistenceEntity.setReadyAt(order.readyAt());
         orderPersistenceEntity.setVersion(order.version());

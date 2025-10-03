@@ -19,6 +19,7 @@ public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository persistenceRepository;
     private final OrderPersistenceEntityAssembler assembler;
+
     private final OrderPersistenceEntityDisassembler disassembler;
 
     private final EntityManager entityManager;
