@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipientEmbedabble {
+public class RecipientEmbeddable {
     private String firstName;
     private String lastName;
     private String document;

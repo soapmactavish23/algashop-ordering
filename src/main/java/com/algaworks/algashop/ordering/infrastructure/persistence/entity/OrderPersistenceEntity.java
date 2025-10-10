@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.entity;
 
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
-import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbaddable;
+import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -83,13 +83,13 @@ public class OrderPersistenceEntity {
             @AttributeOverride(name = "address.state", column = @Column(name = "shipping_address_state")),
             @AttributeOverride(name = "address.zipCode", column = @Column(name = "shipping_address_zipCode"))
     })
-    private ShippingEmbaddable shipping;
+    private ShippingEmbeddable shipping;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItemPersistenceEntity> items = new HashSet<>();
 
     @Builder
-    public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbaddable shipping, Set<OrderItemPersistenceEntity> items) {
+    public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
         this.id = id;
         this.customerId = customerId;
         this.totalAmount = totalAmount;

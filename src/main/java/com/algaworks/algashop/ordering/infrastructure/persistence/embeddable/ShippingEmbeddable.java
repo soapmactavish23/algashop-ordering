@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShippingEmbaddable {
+public class ShippingEmbeddable {
 
     private BigDecimal cost;
     private LocalDate expectedDate;
@@ -24,6 +24,6 @@ public class ShippingEmbaddable {
     private AddressEmbeddable address;
 
     @Embedded
-    private RecipientEmbedabble recipient;
+    private RecipientEmbeddable recipient;
 
 }
