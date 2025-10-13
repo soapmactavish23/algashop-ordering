@@ -129,7 +129,7 @@ public class OrderPersistenceEntity {
         }
 
         item.setOrder(this);
-        this.getItems().add(item);
+        items.add(item);
     }
 
 }

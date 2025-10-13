@@ -52,12 +52,8 @@ public class OrdersPersistenceProvider implements Orders {
 
         persistenceRepository.findById(orderId)
                 .ifPresentOrElse(
-                        (persistenceEntity) -> {
-                            update(aggregateRoot, persistenceEntity);
-                        },
-                        ()-> {
-                            insert(aggregateRoot);
-                        }
+                        persistenceEntity -> update(aggregateRoot, persistenceEntity),
+                        ()-> insert(aggregateRoot)
                 );
     }
 
@@ -67,7 +63,6 @@ public class OrdersPersistenceProvider implements Orders {
         persistenceEntity = persistenceRepository.saveAndFlush(persistenceEntity);
         updateVersion(aggregateRoot, persistenceEntity);
     }
-
 
     private void insert(Order aggregateRoot) {
         OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);

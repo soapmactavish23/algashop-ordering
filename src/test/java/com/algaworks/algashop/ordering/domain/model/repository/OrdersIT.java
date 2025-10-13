@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         OrderPersistenceEntityDisassembler.class})
 class OrdersIT {
 
-    private Orders orders;
+    private final Orders orders;
 
     @Autowired
     public OrdersIT(Orders orders) {
@@ -93,6 +93,7 @@ class OrdersIT {
 
         Assertions.assertThat(savedOrder.canceledAt()).isNull();
         Assertions.assertThat(savedOrder.paidAt()).isNotNull();
+
     }
 
     @Test

@@ -41,32 +41,35 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setBilling(toBillingEmbeddable(order.billing()));
         orderPersistenceEntity.setShipping(toShippingEmbeddable(order.shipping()));
         Set<OrderItemPersistenceEntity> mergedItems = mergeItems(order, orderPersistenceEntity);
-        orderPersistenceEntity.setItems(mergedItems);
+        orderPersistenceEntity.replaceItems(mergedItems);
         return orderPersistenceEntity;
     }
 
     private Set<OrderItemPersistenceEntity> mergeItems(Order order, OrderPersistenceEntity orderPersistenceEntity) {
         Set<OrderItem> newOrUpdatedItems = order.items();
 
-        if(newOrUpdatedItems == null || newOrUpdatedItems.isEmpty()) {
+        if (newOrUpdatedItems == null || newOrUpdatedItems.isEmpty()) {
             return new HashSet<>();
         }
 
         Set<OrderItemPersistenceEntity> existingItems = orderPersistenceEntity.getItems();
-        if(existingItems == null || existingItems.isEmpty()) {
-            return newOrUpdatedItems.stream().map(this::fromDomain)
+        if (existingItems == null || existingItems.isEmpty()) {
+            return newOrUpdatedItems.stream()
+                    .map(orderItem -> fromDomain(orderItem))
                     .collect(Collectors.toSet());
         }
 
         Map<Long, OrderItemPersistenceEntity> existingItemMap = existingItems.stream()
                 .collect(Collectors.toMap(OrderItemPersistenceEntity::getId, item -> item));
 
-
-        return newOrUpdatedItems.stream().map(orderItem -> {
-            OrderItemPersistenceEntity itemPersistence = existingItemMap
-                    .getOrDefault(orderItem.id().value().toLong(), new OrderItemPersistenceEntity());
-            return merge(itemPersistence, orderItem);
-        }).collect(Collectors.toSet());
+        return newOrUpdatedItems.stream()
+                .map(orderItem -> {
+                    OrderItemPersistenceEntity itemPersistence = existingItemMap.getOrDefault(
+                            orderItem.id().value().toLong(), new OrderItemPersistenceEntity()
+                    );
+                    return merge(itemPersistence, orderItem);
+                })
+                .collect(Collectors.toSet());
     }
 
     public OrderItemPersistenceEntity fromDomain(OrderItem orderItem) {
@@ -116,7 +119,6 @@ public class OrderPersistenceEntityAssembler {
         if (shipping == null) {
             return null;
         }
-
         var builder = ShippingEmbeddable.builder()
                 .expectedDate(shipping.expectedDate())
                 .cost(shipping.cost().value())

@@ -53,8 +53,12 @@ public class OrderTestDataBuilder {
                 order.markAsPaid();
             }
             case READY -> {
+                order.place();
+                order.markAsPaid();
+                order.markAsReady();
             }
             case CANCELED -> {
+                order.cancel();
             }
         }
 
@@ -67,7 +71,7 @@ public class OrderTestDataBuilder {
                 .document(new Document("225-09-1992"))
                 .phone(new Phone("123-111-9911"))
                 .fullName(new FullName("John", "Doe"))
-                .email(new Email("jhon.doe@email.com"))
+                .email(new Email("jhon.doe@gmail.com"))
                 .build();
     }
 
