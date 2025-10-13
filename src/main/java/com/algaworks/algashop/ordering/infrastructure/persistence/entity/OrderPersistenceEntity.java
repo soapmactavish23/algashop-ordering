@@ -110,20 +110,21 @@ public class OrderPersistenceEntity {
     }
 
     public void replaceItems(Set<OrderItemPersistenceEntity> items) {
-        if(items == null || items.isEmpty()) {
+        if (items == null || items.isEmpty()) {
             this.setItems(new HashSet<>());
             return;
         }
+
         items.forEach(i -> i.setOrder(this));
         this.setItems(items);
     }
 
     public void addItem(OrderItemPersistenceEntity item) {
-        if(item == null) {
+        if (item == null) {
             return;
         }
 
-        if(this.getItems() == null) {
+        if (this.getItems() == null) {
             this.setItems(new HashSet<>());
         }
 

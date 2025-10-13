@@ -8,11 +8,9 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderItemId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.ProductId;
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
-@Slf4j
 public class OrderItem {
 
     private OrderItemId id;
@@ -41,10 +39,11 @@ public class OrderItem {
     }
 
     @Builder(builderClassName = "BrandNewOrderItemBuilder", builderMethodName = "brandNew")
-    private static OrderItem createBrandNew(OrderId orderId, Product product, Quantity quantity) {
-
-        Objects.requireNonNull(orderId);
+    private static OrderItem createBrandNew(OrderId orderId,
+                                            Product product,
+                                            Quantity quantity) {
         Objects.requireNonNull(product);
+        Objects.requireNonNull(orderId);
         Objects.requireNonNull(quantity);
 
         OrderItem orderItem = new OrderItem(
@@ -60,7 +59,6 @@ public class OrderItem {
         orderItem.recalculateTotals();
 
         return orderItem;
-
     }
 
     void changeQuantity(Quantity quantity) {
@@ -147,4 +145,5 @@ public class OrderItem {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }

@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.infrastructure.persistence.assambler;
+package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
@@ -38,6 +38,8 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setCanceledAt(order.canceledAt());
         orderPersistenceEntity.setReadyAt(order.readyAt());
         orderPersistenceEntity.setVersion(order.version());
+        orderPersistenceEntity.setBilling(toBillingEmbeddable(order.billing()));
+        orderPersistenceEntity.setShipping(toShippingEmbeddable(order.shipping()));
         Set<OrderItemPersistenceEntity> mergedItems = mergeItems(order, orderPersistenceEntity);
         orderPersistenceEntity.setItems(mergedItems);
         return orderPersistenceEntity;

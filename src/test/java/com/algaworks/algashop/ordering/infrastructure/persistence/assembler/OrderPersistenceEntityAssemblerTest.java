@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.infrastructure.persistence.assambler;
+package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
