@@ -23,7 +23,7 @@ class OrderPersistenceEntityDisassemblerTest {
         Order domainEntity = disassembler.toDomainEntity(persistenceEntity);
         assertThat(domainEntity).satisfies(
                 s -> assertThat(s.id()).isEqualTo(new OrderId(persistenceEntity.getId())),
-                s -> assertThat(s.customerId()).isEqualTo(new CustomerId(persistenceEntity.getCustomerId())),
+                s -> assertThat(s.customerId()).isEqualTo(new CustomerId(persistenceEntity.getCustomer().getId())),
                 s -> assertThat(s.totalAmount()).isEqualTo(new Money(persistenceEntity.getTotalAmount())),
                 s -> assertThat(s.totalItems()).isEqualTo(new Quantity(persistenceEntity.getTotalItems())),
                 s -> assertThat(s.placedAt()).isEqualTo(persistenceEntity.getPlacedAt()),
