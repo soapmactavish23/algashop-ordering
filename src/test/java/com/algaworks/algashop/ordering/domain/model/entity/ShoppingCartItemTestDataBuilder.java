@@ -6,7 +6,7 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.Quantity;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.ProductId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.ShoppingCartId;
 
-class ShoppingCartItemTestDataBuilder {
+public class ShoppingCartItemTestDataBuilder {
 
     private ShoppingCartId shoppingCartId = ShoppingCartTestDataBuilder.DEFAULT_SHOPPING_CART_ID;
     private ProductId productId = ProductTestDataBuilder.DEFAULT_PRODUCT_ID;
