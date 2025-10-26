@@ -1,20 +1,25 @@
 package com.algaworks.algashop.ordering.domain.model.service;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Customer;
-import com.algaworks.algashop.ordering.domain.model.exceptions.CustomerEmailIsUseException;
+import com.algaworks.algashop.ordering.domain.model.exceptions.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.domain.model.repository.Customers;
+import com.algaworks.algashop.ordering.domain.model.utility.DomainService;
 import com.algaworks.algashop.ordering.domain.model.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import lombok.RequiredArgsConstructor;
 
+@DomainService
 @RequiredArgsConstructor
 public class CustomerRegistrationService {
 
-    private Customers customers;
+    private final Customers customers;
 
-    public Customer register(FullName fullName, BirthDate birthDate, Email email,
-                             Phone phone, Document document, Boolean promotionNotificationsAllowed,
-                             Address address) {
+    public Customer register(
+            FullName fullName, BirthDate birthDate, Email email,
+            Phone phone, Document document, Boolean promotionNotificationsAllowed,
+            Address address
+    ) {
+
         Customer customer = Customer.brandNew()
                 .fullName(fullName)
                 .birthDate(birthDate)
@@ -37,7 +42,7 @@ public class CustomerRegistrationService {
 
     private void verifyEmailUniqueness(Email email, CustomerId customerId) {
         if (!customers.isEmailUnique(email, customerId)) {
-            throw new CustomerEmailIsUseException();
+            throw new CustomerEmailIsInUseException();
         }
     }
 
