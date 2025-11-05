@@ -23,7 +23,7 @@ class CustomerManagementApplicationServiceIT {
         CustomerInput input = CustomerInput.builder()
                 .firstName("John")
                 .lastName("Doe")
-                .birthDate(LocalDate.of(1991, 7, 5))
+                .birthDate(LocalDate.of(1991, 7,5))
                 .document("255-08-0578")
                 .phone("478-256-2604")
                 .email("johndoe@email.com")
@@ -48,9 +48,8 @@ class CustomerManagementApplicationServiceIT {
         Assertions.assertThat(customerOutput.getFirstName()).isEqualTo("John");
         Assertions.assertThat(customerOutput.getLastName()).isEqualTo("Doe");
         Assertions.assertThat(customerOutput.getEmail()).isEqualTo("johndoe@email.com");
-        Assertions.assertThat(customerOutput.getBirthDate()).isEqualTo(LocalDate.of(1991, 7, 5));
+        Assertions.assertThat(customerOutput.getBirthDate()).isEqualTo(LocalDate.of(1991, 7,5));
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
-
     }
 
 }
