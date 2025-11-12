@@ -10,18 +10,19 @@ import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.product.ProductCatalogService;
 import com.algaworks.algashop.ordering.domain.model.product.ProductId;
 import com.algaworks.algashop.ordering.domain.model.product.ProductNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BuyNowApplicationService {
 
     private final BuyNowService buyNowService;
     private final ProductCatalogService productCatalogService;
+
     private final ShippingCostService shippingCostService;
     private final OriginAddressService originAddressService;
 
@@ -42,11 +43,14 @@ public class BuyNowApplicationService {
 
         var shippingCalculationResult = calculateShippingCost(input.getShipping());
 
-        Shipping shipping = shippingInputDisassembler.toDomainModel(input.getShipping(), shippingCalculationResult);
+        Shipping shipping = shippingInputDisassembler.toDomainModel(input.getShipping(),
+                shippingCalculationResult);
 
         Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
 
-        Order order = buyNowService.buyNow(product, customerId, billing, shipping, quantity, paymentMethod);
+        Order order = buyNowService.buyNow(
+                product, customerId, billing, shipping, quantity, paymentMethod
+        );
 
         orders.add(order);
 
