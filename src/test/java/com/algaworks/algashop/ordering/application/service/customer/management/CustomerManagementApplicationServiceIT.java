@@ -4,6 +4,7 @@ import com.algaworks.algashop.ordering.application.customer.management.CustomerI
 import com.algaworks.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerOutput;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerUpdateInput;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
@@ -29,6 +30,9 @@ class CustomerManagementApplicationServiceIT {
 
     @MockitoSpyBean
     private CustomerEventListener customerEventListener;
+
+    @MockitoSpyBean
+    private CustomerNotificationService customerNotificationService;
 
     @Test
     public void shouldRegister() {
@@ -57,10 +61,8 @@ class CustomerManagementApplicationServiceIT {
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
 
         Mockito.verify(customerEventListener).listen(Mockito.any(CustomerRegisteredEvent.class));
-        Mockito.verify(customerEventListener).listenSecondary(Mockito.any(CustomerRegisteredEvent.class));
-
-        Mockito.verify(customerEventListener, Mockito.never())
-                .listen(Mockito.any(CustomerArchivedEvent.class));
+        Mockito.verify(customerEventListener, Mockito.never()).listen(Mockito.any(CustomerArchivedEvent.class));
+        Mockito.verify(customerNotificationService).notifyNewRegistration(Mockito.any(UUID.class));
     }
 
     @Test
