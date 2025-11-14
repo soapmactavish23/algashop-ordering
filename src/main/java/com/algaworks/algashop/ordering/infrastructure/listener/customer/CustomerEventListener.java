@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import static com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService.*;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -18,7 +20,12 @@ public class CustomerEventListener {
     @EventListener
     public void listen(CustomerRegisteredEvent event) {
         log.info("CustomerRegisteredEvent listen 1");
-        customerNotificationService.notifyNewRegistration(event.customerId().value());
+        NotifyNewRegistrationInput input = new NotifyNewRegistrationInput(
+                event.customerId().value(),
+                event.fullName().firstName(),
+                event.email().value()
+        );
+        customerNotificationService.notifyNewRegistration(input);
     }
 
     @EventListener

@@ -45,7 +45,8 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
                 LoyaltyPoints.ZERO,
                 address);
 
-        customer.publichDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt()));
+        customer.publichDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
+                customer.fullName(), customer.email()));
 
         return customer;
     }
