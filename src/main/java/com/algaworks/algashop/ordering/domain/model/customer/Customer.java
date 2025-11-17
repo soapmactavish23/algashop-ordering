@@ -45,7 +45,7 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
                 LoyaltyPoints.ZERO,
                 address);
 
-        customer.publichDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
                 customer.fullName(), customer.email()));
 
         return customer;
@@ -92,7 +92,7 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
                 .number("Anonymized")
                 .complement(null).build());
 
-        this.publichDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt()));
+        this.publishDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt()));
 
     }
 

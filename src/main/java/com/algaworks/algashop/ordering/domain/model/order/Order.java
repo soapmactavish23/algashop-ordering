@@ -16,7 +16,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Order extends AbstractEventSourceEntity implements AggregateRoot<OrderId> {
+public class Order
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<OrderId> {
 
     private OrderId id;
     private CustomerId customerId;
@@ -109,16 +111,25 @@ public class Order extends AbstractEventSourceEntity implements AggregateRoot<Or
         this.verifyIfCanChangeToPlaced();
         this.changeStatus(OrderStatus.PLACED);
         this.setPlacedAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderPlacedEvent(this.id(), this.customerId(), this.placedAt()));
     }
 
     public void markAsPaid() {
         this.changeStatus(OrderStatus.PAID);
         this.setPaidAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderPaidEvent(this.id(), this.customerId(), this.paidAt()));
     }
 
     public void markAsReady() {
         this.changeStatus(OrderStatus.READY);
         this.setReadyAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderReadyEvent(this.id(), this.customerId(), this.readyAt()));
+    }
+
+    public void cancel() {
+        this.setCanceledAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.CANCELED);
+        publishDomainEvent(new OrderCanceledEvent(this.id(), this.customerId(), this.canceledAt()));
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
@@ -143,6 +154,7 @@ public class Order extends AbstractEventSourceEntity implements AggregateRoot<Or
         }
 
         this.setShipping(newShipping);
+        this.recalculateTotals();
     }
 
     public void changeItemQuantity(OrderItemId orderItemId, Quantity quantity) {
@@ -165,11 +177,6 @@ public class Order extends AbstractEventSourceEntity implements AggregateRoot<Or
         this.items.remove(orderItem);
 
         this.recalculateTotals();
-    }
-
-    public void cancel() {
-        this.setCanceledAt(OffsetDateTime.now());
-        this.changeStatus(OrderStatus.CANCELED);
     }
 
     public boolean isDraft() {

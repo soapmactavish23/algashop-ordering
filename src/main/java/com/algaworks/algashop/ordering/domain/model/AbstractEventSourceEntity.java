@@ -9,7 +9,7 @@ public abstract class AbstractEventSourceEntity implements DomainEventSource {
 
     protected final List<Object> domainEvents = new ArrayList<>();
 
-    protected void publichDomainEvent(Object event) {
+    protected void publishDomainEvent(Object event) {
         Objects.requireNonNull(event);
         this.domainEvents.add(event);
     }
