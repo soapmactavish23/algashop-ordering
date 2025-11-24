@@ -1,10 +1,9 @@
 package com.algaworks.algashop.ordering.application.service.customer.management;
 
-import com.algaworks.algashop.ordering.application.customer.management.CustomerInput;
-import com.algaworks.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
-import com.algaworks.algashop.ordering.application.customer.management.CustomerOutput;
-import com.algaworks.algashop.ordering.application.customer.management.CustomerUpdateInput;
+import com.algaworks.algashop.ordering.application.customer.management.*;
 import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
+import com.algaworks.algashop.ordering.application.customer.query.CustomerOutput;
+import com.algaworks.algashop.ordering.application.customer.query.CustomerQueryService;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
@@ -34,14 +33,17 @@ class CustomerManagementApplicationServiceIT {
     @MockitoSpyBean
     private CustomerNotificationApplicationService customerNotificationApplicationService;
 
+    @Autowired
+    private CustomerQueryService queryService;
+
     @Test
-    public void shouldRegister() {
+    void shouldRegister() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
 
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = queryService.findById(customerId);
 
         Assertions.assertThat(customerOutput)
                 .extracting(
@@ -67,7 +69,7 @@ class CustomerManagementApplicationServiceIT {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         CustomerUpdateInput updateInput = CustomerUpdateInputTestDataBuilder.aCustomerUpdate().build();
 
@@ -76,7 +78,7 @@ class CustomerManagementApplicationServiceIT {
 
         customerManagementApplicationService.update(customerId, updateInput);
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = queryService.findById(customerId);
 
         Assertions.assertThat(customerOutput)
                 .extracting(
@@ -97,14 +99,14 @@ class CustomerManagementApplicationServiceIT {
     }
 
     @Test
-    public void shouldArchiveCustomer() {
+    void shouldArchiveCustomer() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
         customerManagementApplicationService.archive(customerId);
 
-        CustomerOutput archivedCustomer = customerManagementApplicationService.findById(customerId);
+        CustomerOutput archivedCustomer = queryService.findById(customerId);
 
         Assertions.assertThat(archivedCustomer)
                 .isNotNull()
@@ -134,7 +136,7 @@ class CustomerManagementApplicationServiceIT {
     }
 
     @Test
-    public void shouldThrowCustomerNotFoundExceptionWhenArchivingNonExistingCustomer() {
+    void shouldThrowCustomerNotFoundExceptionWhenArchivingNonExistingCustomer() {
         UUID nonExistingId = UUID.randomUUID();
 
         Assertions.assertThatExceptionOfType(CustomerNotFoundException.class)
@@ -142,7 +144,7 @@ class CustomerManagementApplicationServiceIT {
     }
 
     @Test
-    public void shouldThrowCustomerArchivedExceptionWhenArchivingAlreadyArchivedCustomer() {
+    void shouldThrowCustomerArchivedExceptionWhenArchivingAlreadyArchivedCustomer() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
