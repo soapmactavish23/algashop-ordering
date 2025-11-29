@@ -2,7 +2,6 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.order;
 
 import com.algaworks.algashop.ordering.application.order.query.*;
 import com.algaworks.algashop.ordering.application.utility.Mapper;
-import com.algaworks.algashop.ordering.application.utility.PageFilter;
 import com.algaworks.algashop.ordering.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.domain.model.order.OrderNotFoundException;
 import jakarta.persistence.EntityManager;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -52,14 +52,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         Root<OrderPersistenceEntity> root = criteriaQuery.from(OrderPersistenceEntity.class);
 
         Expression<Long> count = builder.count(root);
+        Predicate[] predicates = toPredicates(builder, root, filter);
+
         criteriaQuery.select(count);
+        criteriaQuery.where(predicates);
 
         TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
 
         return query.getSingleResult();
     }
 
-    private Page<OrderSummaryOutput> filterQuery(PageFilter filter, Long totalQueryResults) {
+    private Page<OrderSummaryOutput> filterQuery(OrderFilter filter, Long totalQueryResults) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<OrderSummaryOutput> criteriaQuery = builder.createQuery(OrderSummaryOutput.class);
 
@@ -88,6 +91,10 @@ public class OrderQueryServiceImpl implements OrderQueryService {
                         )
         );
 
+        Predicate[] predicates = toPredicates(builder, root, filter);
+
+        criteriaQuery.where(predicates);
+
         TypedQuery<OrderSummaryOutput> typedQuery = entityManager.createQuery(criteriaQuery);
 
         typedQuery.setFirstResult(filter.getSize() * filter.getPage());
@@ -97,4 +104,15 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
         return new PageImpl<>(typedQuery.getResultList(), pageRequest, totalQueryResults);
     }
+
+    private Predicate[] toPredicates(CriteriaBuilder builder, Root<OrderPersistenceEntity> root, OrderFilter filter) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if(filter.getCustomerId() != null) {
+            predicates.add(builder.equal(root.get("customer").get("id"), filter.getCustomerId()));
+        }
+
+        return predicates.toArray(new Predicate[]{});
+    }
+
 }
