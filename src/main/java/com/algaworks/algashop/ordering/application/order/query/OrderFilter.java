@@ -32,7 +32,7 @@ public class OrderFilter extends SortablePageFilter<OrderFilter.SortType> {
     }
 
     @Override
-    public Sort.Direction getSortDiractionOrDefault() {
+    public Sort.Direction getSortDirectionOrDefault() {
         return getSortDirection() == null ? Sort.Direction.ASC : getSortDirection();
     }
 

@@ -111,11 +111,11 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     private Order toSortOrder(CriteriaBuilder builder, Root<OrderPersistenceEntity> root, OrderFilter filter) {
-        if(filter.getSortDiractionOrDefault() == Sort.Direction.ASC) {
+        if(filter.getSortDirectionOrDefault() == Sort.Direction.ASC) {
             return builder.asc(root.get(filter.getSortByPropertyOrDefault().getPropertyName()));
         }
 
-        if(filter.getSortDiractionOrDefault() == Sort.Direction.DESC) {
+        if(filter.getSortDirectionOrDefault() == Sort.Direction.DESC) {
             return builder.desc(root.get(filter.getSortByPropertyOrDefault().getPropertyName()));
         }
 
