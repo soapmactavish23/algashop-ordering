@@ -1,8 +1,8 @@
 plugins {
-	id 'idea'
-	id 'java'
-	id 'org.springframework.boot' version '3.5.5'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'idea'
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'org.springframework.cloud.contract' version '4.3.0'
 }
 
@@ -10,20 +10,20 @@ group = 'com.algaworks.algashop'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
     mockitoAgent
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 ext {
@@ -37,49 +37,35 @@ dependencyManagement {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
-	implementation 'commons-validator:commons-validator:1.9.0'
-	implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
-	testImplementation 'org.assertj:assertj-core:3.27.3'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'commons-validator:commons-validator:1.9.0'
+    implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
+    implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.modelmapper:modelmapper:3.2.4'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    runtimeOnly 'com.h2database:h2'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'io.rest-assured:spring-mock-mvc'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.h2database:h2'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     mockitoAgent('org.mockito:mockito-core:5.14.2') {transitive = false}
-
-    implementation 'org.modelmapper:modelmapper:3.2.4'
-
-    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }
 
 contracts {
-//    testFramework ='JUNIT5'
-//    testMode = 'MockMvc' #RestAssuredMockMvc
+    packageWithBaseClasses = "com.algaworks.algashop.ordering.contract.base"
 }
 
 tasks.named('contractTest') {
     useJUnitPlatform()
 }
 
-tasks.named('check') {
-    dependsOn(test, contractTest, integrationTest)
-}
-
-contracts {
-    testFramework ='JUNIT5'
-    testMode = 'MockMvc'
-    contractsDslDir = project.file("${layout.projectDirectory}/src/contractTest/resources/contracts")
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 test {
@@ -90,7 +76,7 @@ test {
 }
 
 tasks.named('check') {
-    dependsOn(test, integrationTest)
+    dependsOn(test, contractTest, integrationTest)
 }
 
 tasks.register('integrationTest', Test) {

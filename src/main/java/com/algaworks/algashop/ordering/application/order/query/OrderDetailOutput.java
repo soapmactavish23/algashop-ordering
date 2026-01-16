@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class OrderDetailOutput {
-
     private String id;
     private CustomerMinimalOutput customer;
     private Integer totalItems;
@@ -28,7 +27,5 @@ public class OrderDetailOutput {
     private String paymentMethod;
     private ShippingData shipping;
     private BillingData billing;
-
     private List<OrderItemDetailOutput> items = new ArrayList<>();
-
 }

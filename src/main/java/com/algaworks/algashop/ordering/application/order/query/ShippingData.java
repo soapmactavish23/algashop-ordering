@@ -18,6 +18,6 @@ public class ShippingData {
     private BigDecimal cost;
     private LocalDate expectedDate;
     private RecipientData recipient;
-    private AddressData addressData;
+    private AddressData address;
 
 }

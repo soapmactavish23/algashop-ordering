@@ -39,7 +39,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     public Page<OrderSummaryOutput> filter(OrderFilter filter) {
         Long totalQueryResults = countTotalQueryResults(filter);
 
-        if(totalQueryResults.equals(0L)) {
+        if (totalQueryResults.equals(0L)) {
             PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getSize());
             return new PageImpl<>(new ArrayList<>(), pageRequest, totalQueryResults);
         }
@@ -88,15 +88,15 @@ public class OrderQueryServiceImpl implements OrderQueryService {
                                 customer.get("lastName"),
                                 customer.get("email"),
                                 customer.get("document"),
-                                customer.get("phone"))
+                                customer.get("phone")
                         )
+                )
         );
-
         Predicate[] predicates = toPredicates(builder, root, filter);
         Order sortOrder = toSortOrder(builder, root, filter);
-        
+
         criteriaQuery.where(predicates);
-        if(sortOrder != null) {
+        if (sortOrder != null) {
             criteriaQuery.orderBy(sortOrder);
         }
 
@@ -111,11 +111,12 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     private Order toSortOrder(CriteriaBuilder builder, Root<OrderPersistenceEntity> root, OrderFilter filter) {
-        if(filter.getSortDirectionOrDefault() == Sort.Direction.ASC) {
+
+        if (filter.getSortDirectionOrDefault() == Sort.Direction.ASC) {
             return builder.asc(root.get(filter.getSortByPropertyOrDefault().getPropertyName()));
         }
 
-        if(filter.getSortDirectionOrDefault() == Sort.Direction.DESC) {
+        if (filter.getSortDirectionOrDefault() == Sort.Direction.DESC) {
             return builder.desc(root.get(filter.getSortByPropertyOrDefault().getPropertyName()));
         }
 
@@ -163,5 +164,4 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
         return predicates.toArray(new Predicate[]{});
     }
-
 }
