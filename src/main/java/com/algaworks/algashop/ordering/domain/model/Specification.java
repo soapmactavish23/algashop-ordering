@@ -11,12 +11,12 @@ public interface Specification<T> {
         return t -> this.isSatisfiedBy(t) || other.isSatisfiedBy(t);
     }
 
-    default Specification<T> andNot(Specification<T> other) {
-        return t -> this.isSatisfiedBy(t) && !other.isSatisfiedBy(t);
-    }
-
     default Specification<T> not() {
         return t -> !this.isSatisfiedBy(t);
+    }
+
+    default Specification<T> andNot(Specification<T> other) {
+        return t -> this.isSatisfiedBy(t) && !other.isSatisfiedBy(t);
     }
 
 }

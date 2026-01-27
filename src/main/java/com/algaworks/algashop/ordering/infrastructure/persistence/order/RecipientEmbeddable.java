@@ -6,11 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Data
 public class RecipientEmbeddable {
     private String firstName;
     private String lastName;

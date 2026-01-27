@@ -15,7 +15,7 @@ public abstract class AbstractEventSourceEntity implements DomainEventSource {
     }
 
     @Override
-    public List<Object> domainEvent() {
+    public List<Object> domainEvents() {
         return Collections.unmodifiableList(this.domainEvents);
     }
 
@@ -23,4 +23,5 @@ public abstract class AbstractEventSourceEntity implements DomainEventSource {
     public void clearDomainEvents() {
         this.domainEvents.clear();
     }
+
 }

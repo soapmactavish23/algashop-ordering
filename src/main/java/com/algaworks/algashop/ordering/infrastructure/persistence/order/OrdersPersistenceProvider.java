@@ -46,6 +46,7 @@ public class OrdersPersistenceProvider implements Orders {
         return persistenceRepository.count();
     }
 
+
     @Override
     @Transactional(readOnly = false)
     public void add(Order aggregateRoot) {
@@ -53,7 +54,7 @@ public class OrdersPersistenceProvider implements Orders {
 
         persistenceRepository.findById(orderId)
                 .ifPresentOrElse(
-                        persistenceEntity -> update(aggregateRoot, persistenceEntity),
+                        (persistenceEntity) -> update(aggregateRoot, persistenceEntity),
                         ()-> insert(aggregateRoot)
                 );
     }
@@ -61,7 +62,9 @@ public class OrdersPersistenceProvider implements Orders {
     @Override
     public List<Order> placedByCustomerInYear(CustomerId customerId, Year year) {
         List<OrderPersistenceEntity> entities = persistenceRepository.placedByCustomerInYear(
-                customerId.value(), year.getValue());
+                customerId.value(),
+                year.getValue()
+        );
 
         return entities.stream().map(disassembler::toDomainEntity).collect(Collectors.toList());
     }
@@ -96,4 +99,5 @@ public class OrdersPersistenceProvider implements Orders {
         ReflectionUtils.setField(version, aggregateRoot, persistenceEntity.getVersion());
         version.setAccessible(false);
     }
+
 }

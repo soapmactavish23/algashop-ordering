@@ -8,11 +8,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Data
 public class BillingEmbeddable {
     private String firstName;
     private String lastName;

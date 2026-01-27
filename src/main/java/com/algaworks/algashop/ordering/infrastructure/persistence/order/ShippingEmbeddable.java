@@ -11,20 +11,16 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
-@Builder
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Data
 public class ShippingEmbeddable {
-
     private BigDecimal cost;
     private LocalDate expectedDate;
-
     @Embedded
     private AddressEmbeddable address;
-
     @Embedded
     private RecipientEmbeddable recipient;
-
 }

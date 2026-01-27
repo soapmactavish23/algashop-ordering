@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.infrastructure.listener.customer;
 
 import com.algaworks.algashop.ordering.application.customer.loyaltypoints.CustomerLoyaltyPointsApplicationService;
 import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService.NotifyNewRegistrationInput;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerRegisteredEvent;
 import com.algaworks.algashop.ordering.domain.model.order.OrderReadyEvent;
@@ -10,15 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import static com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService.NotifyNewRegistrationInput;
-
-@Slf4j
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class CustomerEventListener {
 
     private final CustomerNotificationApplicationService customerNotificationApplicationService;
-
     private final CustomerLoyaltyPointsApplicationService customerLoyaltyPointsApplicationService;
 
     @EventListener
