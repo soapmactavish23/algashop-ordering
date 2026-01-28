@@ -1,10 +1,14 @@
 package com.algaworks.algashop.ordering.presentation.order;
 
+import com.algaworks.algashop.ordering.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
 import io.restassured.RestAssured;
 import io.restassured.path.json.config.JsonPathConfig;
+import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,9 @@ class OrderControllerIT {
     private int port;
 
     private static boolean databaseInitialized;
+
+    @Autowired
+    private OrderPersistenceEntityRepository orderRepository;
 
     @Autowired
     private CustomerPersistenceEntityRepository customerRepository;
@@ -55,7 +62,8 @@ class OrderControllerIT {
     @Test
     void shouldCreateOrderUsingProduct() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
-        RestAssured
+
+        String createdOrderId = RestAssured
                 .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType("application/vnd.order-with-product.v1+json")
@@ -65,7 +73,13 @@ class OrderControllerIT {
                 .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .statusCode(HttpStatus.CREATED.value());
+                .statusCode(HttpStatus.CREATED.value())
+                .body("id", Matchers.not(Matchers.emptyString()),
+                        "customer.id", Matchers.is(validCustomerId.toString()))
+                .extract().jsonPath().getString("id");
+
+        boolean orderExists = orderRepository.existsById(new OrderId(createdOrderId).value().toLong());
+        Assertions.assertThat(orderExists).isTrue();
     }
 
     @Test
