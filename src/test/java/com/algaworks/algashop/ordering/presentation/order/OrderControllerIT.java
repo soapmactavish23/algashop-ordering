@@ -69,7 +69,7 @@ class OrderControllerIT {
     }
 
     @Test
-    void shouldNotCreateOrderUsingProductWhenCustomerWasNotFoutn() {
+    void shouldNotCreateOrderUsingProductWhenCustomerWasNotFound() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product-and-invalid-customer.json");
         RestAssured
                 .given()
@@ -80,7 +80,7 @@ class OrderControllerIT {
                 .post("/api/v1/orders")
                 .then()
                 .assertThat()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
     }
 
