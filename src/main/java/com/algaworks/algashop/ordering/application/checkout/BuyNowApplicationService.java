@@ -44,11 +44,9 @@ public class BuyNowApplicationService {
         Quantity quantity = new Quantity(input.getQuantity());
         ProductId productId = new ProductId(input.getProductId());
 
-        Customer customer = customers.ofId(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        Customer customer = customers.ofId(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        Product product = productCatalogService.ofId(productId)
-                .orElseThrow(() -> new ProductNotFoundException(productId));
+        Product product = productCatalogService.ofId(productId).orElseThrow(()-> new ProductNotFoundException(productId));
 
         var shippingCalculationResult = calculateShippingCost(input.getShipping());
 
