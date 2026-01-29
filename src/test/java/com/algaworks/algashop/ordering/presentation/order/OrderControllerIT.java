@@ -22,7 +22,7 @@ import java.util.UUID;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class OrderControllerIT {
+public class OrderControllerIT {
 
     @LocalServerPort
     private int port;
@@ -30,15 +30,15 @@ class OrderControllerIT {
     private static boolean databaseInitialized;
 
     @Autowired
-    private OrderPersistenceEntityRepository orderRepository;
+    private CustomerPersistenceEntityRepository customerRepository;
 
     @Autowired
-    private CustomerPersistenceEntityRepository customerRepository;
+    private OrderPersistenceEntityRepository orderRepository;
 
     private static final UUID validCustomerId = UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a");
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
 
@@ -48,7 +48,7 @@ class OrderControllerIT {
     }
 
     private void initDatabase() {
-        if(databaseInitialized) {
+        if (databaseInitialized) {
             return;
         }
 
@@ -60,7 +60,7 @@ class OrderControllerIT {
     }
 
     @Test
-    void shouldCreateOrderUsingProduct() {
+    public void shouldCreateOrderUsingProduct() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
 
         String createdOrderId = RestAssured
@@ -76,14 +76,16 @@ class OrderControllerIT {
                 .statusCode(HttpStatus.CREATED.value())
                 .body("id", Matchers.not(Matchers.emptyString()),
                         "customer.id", Matchers.is(validCustomerId.toString()))
-                .extract().jsonPath().getString("id");
+                .extract()
+                .jsonPath().getString("id");
 
         boolean orderExists = orderRepository.existsById(new OrderId(createdOrderId).value().toLong());
         Assertions.assertThat(orderExists).isTrue();
+
     }
 
     @Test
-    void shouldNotCreateOrderUsingProductWhenCustomerWasNotFound() {
+    public void shouldNotCreateOrderUsingProductWhenCustomerWasNotFound() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product-and-invalid-customer.json");
         RestAssured
                 .given()
@@ -97,6 +99,5 @@ class OrderControllerIT {
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
     }
-
 
 }
