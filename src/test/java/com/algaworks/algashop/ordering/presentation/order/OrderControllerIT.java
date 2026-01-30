@@ -35,7 +35,7 @@ public class OrderControllerIT {
     @Autowired
     private OrderPersistenceEntityRepository orderRepository;
 
-    private static final UUID validCustomerId = UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a");
+    private static final UUID validCustomerId = UUID.fromString("73677343-9c25-4bff-a1d8-fea3830b6d97");
 
     @BeforeEach
     public void setup() {
