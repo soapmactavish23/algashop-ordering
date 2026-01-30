@@ -5,10 +5,13 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.customer.Custo
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import io.restassured.RestAssured;
 import io.restassured.path.json.config.JsonPathConfig;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,11 @@ import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class OrderControllerIT {
+class OrderControllerIT {
 
     @LocalServerPort
     private int port;
@@ -37,14 +41,36 @@ public class OrderControllerIT {
 
     private static final UUID validCustomerId = UUID.fromString("73677343-9c25-4bff-a1d8-fea3830b6d97");
 
+    private WireMockServer wireMockProductCatalog;
+    private WireMockServer wireMockRapidex;
+
     @BeforeEach
-    public void setup() {
+    void setup() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
 
         RestAssured.config().jsonConfig(jsonConfig().numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
 
         initDatabase();
+
+        wireMockRapidex = new WireMockServer(
+                options().port(8780)
+                        .usingFilesUnderDirectory("src/test/resources/wiremock/rapidex")
+                        .extensions(new ResponseTemplateTransformer(true)));
+
+        wireMockProductCatalog = new WireMockServer(
+                options().port(8781)
+                        .usingFilesUnderDirectory("src/test/resources/wiremock/product-catalog")
+                        .extensions(new ResponseTemplateTransformer(true)));
+
+        wireMockRapidex.start();
+        wireMockProductCatalog.start();
+    }
+
+    @AfterEach
+    void after() {
+        wireMockRapidex.stop();
+        wireMockProductCatalog.stop();
     }
 
     private void initDatabase() {
@@ -60,7 +86,7 @@ public class OrderControllerIT {
     }
 
     @Test
-    public void shouldCreateOrderUsingProduct() {
+    void shouldCreateOrderUsingProduct() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
 
         String createdOrderId = RestAssured
