@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -28,7 +30,11 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureStubRunner(
+        stubsMode = StubRunnerProperties.StubsMode.LOCAL,
+        ids = "com.algaworks.algashop:product-catalog:0.0.1-SNAPSHOT:8781")
 class OrderControllerIT {
 
     @LocalServerPort
@@ -68,7 +74,7 @@ class OrderControllerIT {
                         .extensions(new ResponseTemplateTransformer(true)));
 
         wireMockRapidex.start();
-        wireMockProductCatalog.start();
+        //wireMockProductCatalog.start();
     }
 
     @AfterEach
@@ -147,7 +153,7 @@ class OrderControllerIT {
     }
 
     @Test
-    void shouldNotCreateOrderUsingProductWhenProductAPIIsUnavailable() {
+    public void shouldNotCreateOrderUsingProductWhenProductAPIIsUnavailable() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
 
         wireMockProductCatalog.stop();
