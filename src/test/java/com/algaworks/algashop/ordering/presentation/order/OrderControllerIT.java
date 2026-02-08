@@ -20,27 +20,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureStubRunner(
-        stubsMode = StubRunnerProperties.StubsMode.LOCAL,
-        ids = "com.algaworks.algashop:product-catalog:0.0.1-SNAPSHOT:8781")
-class OrderControllerIT {
+//@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.LOCAL,
+//        ids = "com.algaworks.algashop:product-catalog:0.0.1-SNAPSHOT:8781")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class OrderControllerIT {
 
     @LocalServerPort
     private int port;
-
-    private static boolean databaseInitialized;
 
     @Autowired
     private CustomerPersistenceEntityRepository customerRepository;
@@ -55,7 +51,7 @@ class OrderControllerIT {
     private WireMockServer wireMockRapidex;
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
 
@@ -63,40 +59,36 @@ class OrderControllerIT {
 
         initDatabase();
 
-        wireMockRapidex = new WireMockServer(
-                options().port(8780)
-                        .usingFilesUnderDirectory("src/test/resources/wiremock/rapidex")
-                        .extensions(new ResponseTemplateTransformer(true)));
+        wireMockRapidex = new WireMockServer(options()
+                .port(8780)
+                .usingFilesUnderDirectory("src/test/resources/wiremock/rapidex")
+                .extensions(new ResponseTemplateTransformer(true)));
 
-        wireMockProductCatalog = new WireMockServer(
-                options().port(8781)
-                        .usingFilesUnderDirectory("src/test/resources/wiremock/product-catalog")
-                        .extensions(new ResponseTemplateTransformer(true)));
+        wireMockProductCatalog = new WireMockServer(options()
+                .port(8781)
+                .usingFilesUnderDirectory("src/test/resources/wiremock/product-catalog")
+                .extensions(new ResponseTemplateTransformer(true)));
 
         wireMockRapidex.start();
-        //wireMockProductCatalog.start();
+
+        wireMockProductCatalog.start();
+
     }
 
     @AfterEach
-    void after() {
+    public void after() {
         wireMockRapidex.stop();
         wireMockProductCatalog.stop();
     }
 
     private void initDatabase() {
-        if (databaseInitialized) {
-            return;
-        }
-
         customerRepository.saveAndFlush(
                 CustomerPersistenceEntityTestDataBuilder.aCustomer().id(validCustomerId).build()
         );
-
-        databaseInitialized = true;
     }
 
     @Test
-    void shouldCreateOrderUsingProduct() {
+    public void shouldCreateOrderUsingProduct() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
 
         String createdOrderId = RestAssured
@@ -121,9 +113,8 @@ class OrderControllerIT {
     }
 
     @Test
-    void shouldCreateOrderUsingProduct_DTO() {
-        BuyNowInput input = BuyNowInputTestDataBuilder
-                .aBuyNowInput()
+    public void shouldCreateOrderUsingProduct_DTO() {
+        BuyNowInput input = BuyNowInputTestDataBuilder.aBuyNowInput()
                 .productId(validProductId)
                 .customerId(validCustomerId)
                 .build();
@@ -142,14 +133,12 @@ class OrderControllerIT {
                 .body("id", Matchers.not(Matchers.emptyString()),
                         "customer.id", Matchers.is(validCustomerId.toString()))
                 .extract()
-                .body()
-                .as(OrderDetailOutput.class);
+                .body().as(OrderDetailOutput.class);
 
         Assertions.assertThat(orderDetailOutput.getCustomer().getId()).isEqualTo(validCustomerId);
 
         boolean orderExists = orderRepository.existsById(new OrderId(orderDetailOutput.getId()).value().toLong());
         Assertions.assertThat(orderExists).isTrue();
-
     }
 
     @Test
@@ -173,7 +162,7 @@ class OrderControllerIT {
     }
 
     @Test
-    void shouldNotCreateOrderUsingProductWhenProductNotExists() {
+    public void shouldNotCreateOrderUsingProductWhenProductNotExists() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-invalid-product.json");
 
         RestAssured
@@ -186,7 +175,7 @@ class OrderControllerIT {
                 .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-                .statusCode(HttpStatus.BAD_GATEWAY.value());
+                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
 
     }
 
