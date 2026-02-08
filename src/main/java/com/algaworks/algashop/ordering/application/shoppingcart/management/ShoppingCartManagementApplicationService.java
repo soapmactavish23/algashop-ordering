@@ -29,10 +29,10 @@ public class ShoppingCartManagementApplicationService {
         ProductId productId = new ProductId(input.getProductId());
 
         ShoppingCart shoppingCart = shoppingCarts.ofId(shoppingCartId)
-                .orElseThrow(()-> new ShoppingCartNotFoundException());
+                .orElseThrow(() -> new ShoppingCartNotFoundException());
 
         Product product = productCatalogService.ofId(productId)
-                .orElseThrow(()-> new ProductNotFoundException());
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         shoppingCart.addItem(product, new Quantity(input.getQuantity()));
 
