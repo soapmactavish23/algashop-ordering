@@ -27,5 +27,7 @@ public class OrderDetailOutput {
     private String paymentMethod;
     private ShippingData shipping;
     private BillingData billing;
+
+    @Builder.Default
     private List<OrderItemDetailOutput> items = new ArrayList<>();
 }
