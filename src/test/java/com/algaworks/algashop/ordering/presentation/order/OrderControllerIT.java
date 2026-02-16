@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.UUID;
 
@@ -30,11 +30,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.LOCAL,
-//        ids = "com.algaworks.algashop:product-catalog:0.0.1-SNAPSHOT:8781")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class OrderControllerIT {
+@Sql(scripts = "classpath:db/clean/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+class OrderControllerIT {
 
     @LocalServerPort
     private int port;
@@ -52,7 +49,7 @@ public class OrderControllerIT {
     private WireMockServer wireMockRapidex;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
 
@@ -77,7 +74,7 @@ public class OrderControllerIT {
     }
 
     @AfterEach
-    public void after() {
+    void after() {
         wireMockRapidex.stop();
         wireMockProductCatalog.stop();
     }
@@ -89,7 +86,7 @@ public class OrderControllerIT {
     }
 
     @Test
-    public void shouldCreateOrderUsingProduct() {
+    void shouldCreateOrderUsingProduct() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
 
         String createdOrderId = RestAssured
@@ -114,7 +111,7 @@ public class OrderControllerIT {
     }
 
     @Test
-    public void shouldCreateOrderUsingProduct_DTO() {
+    void shouldCreateOrderUsingProduct_DTO() {
         BuyNowInput input = BuyNowInputTestDataBuilder.aBuyNowInput()
                 .productId(validProductId)
                 .customerId(validCustomerId)
@@ -143,7 +140,7 @@ public class OrderControllerIT {
     }
 
     @Test
-    public void shouldNotCreateOrderUsingProductWhenProductAPIIsUnavailable() {
+    void shouldNotCreateOrderUsingProductWhenProductAPIIsUnavailable() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
 
         wireMockProductCatalog.stop();
@@ -163,7 +160,7 @@ public class OrderControllerIT {
     }
 
     @Test
-    public void shouldNotCreateOrderUsingProductWhenProductNotExists() {
+    void shouldNotCreateOrderUsingProductWhenProductNotExists() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-invalid-product.json");
 
         RestAssured
@@ -181,7 +178,7 @@ public class OrderControllerIT {
     }
 
     @Test
-    public void shouldNotCreateOrderUsingProductWhenCustomerWasNotFound() {
+    void shouldNotCreateOrderUsingProductWhenCustomerWasNotFound() {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product-and-invalid-customer.json");
         RestAssured
                 .given()
