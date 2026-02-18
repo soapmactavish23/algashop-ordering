@@ -1,7 +1,6 @@
 package com.algaworks.algashop.ordering.presentation.shoppincart;
 
 import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
-import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -28,8 +27,9 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(scripts = "classpath:db/clean/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class ShoppingCartControllerIT {
+@Sql(scripts = "classpath:db/testdata/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "classpath:db/clean/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+public class ShoppingCartControllerIT {
 
     @LocalServerPort
     private int port;
@@ -46,13 +46,12 @@ class ShoppingCartControllerIT {
     private WireMockServer wireMockRapidex;
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
 
         RestAssured.config().jsonConfig(jsonConfig().numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
 
-        initDatabase();
         initWireMock();
     }
 
@@ -72,19 +71,13 @@ class ShoppingCartControllerIT {
     }
 
     @AfterEach
-    void after() {
+    public void after() {
         wireMockRapidex.stop();
         wireMockProductCatalog.stop();
     }
 
-    private void initDatabase() {
-        customerRepository.saveAndFlush(
-                CustomerPersistenceEntityTestDataBuilder.aCustomer().id(validCustomerId).build()
-        );
-    }
-
     @Test
-    void shouldCreateShoppingCart() {
+    public void shouldCreateShoppingCart() {
         String json = AlgaShopResourceUtils.readContent("json/create-shopping-cart.json");
 
         UUID createdShoppingCart = RestAssured
@@ -106,7 +99,7 @@ class ShoppingCartControllerIT {
     }
 
     @Test
-    void shouldAddProductToShoppingCart() {
+    public void shouldAddProductToShoppingCart() {
         var shoppingCartPersistence = existingShoppingCart().items(new HashSet<>())
                 .customer(customerRepository.getReferenceById(validCustomerId))
                 .build();
