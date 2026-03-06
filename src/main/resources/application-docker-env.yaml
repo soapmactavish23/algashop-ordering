@@ -3,8 +3,8 @@ spring:
     url: jdbc:postgresql://algashop-postgres:5432/ordering
   flyway:
     enabled: true
-    locations: classpath:db/migrations,classpath:db/testdata
-    url: jdbc:postgresql://localhost:5432/ordering
+    locations: classpath:db/migration,classpath:db/testdata
+    url: jdbc:postgresql://algashop-postgres:5432/ordering
 
 algashop:
   integrations:
