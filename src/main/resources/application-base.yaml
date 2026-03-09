@@ -7,7 +7,7 @@ spring:
     show-sql: true
   flyway:
     enabled: false
-    locations: classpath:db/migrations
+    locations: classpath:db/migration
 
 algashop:
   integrations:

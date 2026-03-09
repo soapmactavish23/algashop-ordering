@@ -7,7 +7,7 @@ spring:
     show-sql: true
   flyway:
     enabled: false
-    locations: classpath:db/migrations
+    locations: classpath:db/migration
     user: ${FLYWAY_USERNAME}
     password: ${FLYWAY_PASSWORD}
     url: ${DATASOURCE_JDBC_URL}
