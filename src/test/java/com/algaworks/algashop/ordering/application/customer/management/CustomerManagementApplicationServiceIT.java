@@ -1,6 +1,5 @@
-package com.algaworks.algashop.ordering.application.service.customer.management;
+package com.algaworks.algashop.ordering.application.customer.management;
 
-import com.algaworks.algashop.ordering.application.customer.management.*;
 import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
 import com.algaworks.algashop.ordering.application.customer.query.CustomerOutput;
 import com.algaworks.algashop.ordering.application.customer.query.CustomerQueryService;
@@ -14,15 +13,36 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @SpringBootTest
 @Transactional
+@Testcontainers
 class CustomerManagementApplicationServiceIT {
+
+    @Container
+    static PostgreSQLContainer<?> postgreSQLContainer =
+            new PostgreSQLContainer<>("postgres:17-alpine")
+                    .withDatabaseName("ordering_test");
+
+    @DynamicPropertySource
+    static void configurePropertySource(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.flyway.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.flyway.user", postgreSQLContainer::getUsername);
+        registry.add("spring.flyway.password", postgreSQLContainer::getPassword);
+    }
 
     @Autowired
     private CustomerManagementApplicationService customerManagementApplicationService;
@@ -57,15 +77,19 @@ class CustomerManagementApplicationServiceIT {
                         "John",
                         "Doe",
                         "johndoe@email.com",
-                        LocalDate.of(1991, 7,5)
+                        LocalDate.of(1991, 7, 5)
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
 
-        Mockito.verify(customerEventListener).listen(Mockito.any(CustomerRegisteredEvent.class));
-        Mockito.verify(customerEventListener, Mockito.never()).listen(Mockito.any(CustomerArchivedEvent.class));
-        Mockito.verify(customerNotificationApplicationService).notifyNewRegistration(Mockito.any(CustomerNotificationApplicationService
-                .NotifyNewRegistrationInput.class));
+        Mockito.verify(customerEventListener)
+                .listen(Mockito.any(CustomerRegisteredEvent.class));
+
+        Mockito.verify(customerEventListener, Mockito.never())
+                .listen(Mockito.any(CustomerArchivedEvent.class));
+
+        Mockito.verify(customerNotificationApplicationService)
+                .notifyNewRegistration(Mockito.any(CustomerNotificationApplicationService.NotifyNewRegistrationInput.class));
     }
 
     @Test
@@ -92,7 +116,7 @@ class CustomerManagementApplicationServiceIT {
                         "Matt",
                         "Damon",
                         "johndoe@email.com",
-                        LocalDate.of(1991, 7,5)
+                        LocalDate.of(1991, 7, 5)
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
@@ -131,7 +155,7 @@ class CustomerManagementApplicationServiceIT {
         Assertions.assertThat(archivedCustomer.getArchivedAt()).isNotNull();
 
         Assertions.assertThat(archivedCustomer.getAddress()).isNotNull();
-        Assertions.assertThat(archivedCustomer.getAddress().getNumber()).isNotNull().isEqualTo("Anonymized");
+        Assertions.assertThat(archivedCustomer.getAddress().getNumber()).isEqualTo("Anonymized");
         Assertions.assertThat(archivedCustomer.getAddress().getComplement()).isNull();
     }
 
@@ -154,5 +178,4 @@ class CustomerManagementApplicationServiceIT {
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class)
                 .isThrownBy(() -> customerManagementApplicationService.archive(customerId));
     }
-
 }

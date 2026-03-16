@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.application.service.customer.loyaltypoints;
+package com.algaworks.algashop.ordering.application.customer.loyaltypoints;
 
 import com.algaworks.algashop.ordering.application.customer.loyaltypoints.CustomerLoyaltyPointsApplicationService;
 import com.algaworks.algashop.ordering.domain.model.commons.Email;
