@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
+import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
 import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
 import com.algaworks.algashop.ordering.application.customer.query.CustomerOutput;
 import com.algaworks.algashop.ordering.application.customer.query.CustomerQueryService;
@@ -12,27 +13,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-@SpringBootTest
-@Transactional
-@Testcontainers
-class CustomerManagementApplicationServiceIT {
-
-    @Container
-    static PostgreSQLContainer<?> postgreSQLContainer =
-            new PostgreSQLContainer<>("postgres:17-alpine")
-                    .withDatabaseName("ordering_test");
+class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
 
     @DynamicPropertySource
     static void configurePropertySource(DynamicPropertyRegistry registry) {
