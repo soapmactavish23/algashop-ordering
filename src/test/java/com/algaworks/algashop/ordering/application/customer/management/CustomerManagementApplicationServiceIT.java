@@ -13,24 +13,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
-
-    @DynamicPropertySource
-    static void configurePropertySource(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.flyway.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.flyway.user", postgreSQLContainer::getUsername);
-        registry.add("spring.flyway.password", postgreSQLContainer::getPassword);
-    }
 
     @Autowired
     private CustomerManagementApplicationService customerManagementApplicationService;
@@ -45,7 +33,7 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
     private CustomerQueryService queryService;
 
     @Test
-    void shouldRegister() {
+    public void shouldRegister() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
 
         UUID customerId = customerManagementApplicationService.create(input);
@@ -65,7 +53,7 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
                         "John",
                         "Doe",
                         "johndoe@email.com",
-                        LocalDate.of(1991, 7, 5)
+                        LocalDate.of(1991, 7,5)
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
@@ -81,7 +69,7 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
     }
 
     @Test
-    void shouldUpdate() {
+    public void shouldUpdate() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         CustomerUpdateInput updateInput = CustomerUpdateInputTestDataBuilder.aCustomerUpdate().build();
 
@@ -104,14 +92,14 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
                         "Matt",
                         "Damon",
                         "johndoe@email.com",
-                        LocalDate.of(1991, 7, 5)
+                        LocalDate.of(1991, 7,5)
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
     }
 
     @Test
-    void shouldArchiveCustomer() {
+    public void shouldArchiveCustomer() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
@@ -143,12 +131,12 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
         Assertions.assertThat(archivedCustomer.getArchivedAt()).isNotNull();
 
         Assertions.assertThat(archivedCustomer.getAddress()).isNotNull();
-        Assertions.assertThat(archivedCustomer.getAddress().getNumber()).isEqualTo("Anonymized");
+        Assertions.assertThat(archivedCustomer.getAddress().getNumber()).isNotNull().isEqualTo("Anonymized");
         Assertions.assertThat(archivedCustomer.getAddress().getComplement()).isNull();
     }
 
     @Test
-    void shouldThrowCustomerNotFoundExceptionWhenArchivingNonExistingCustomer() {
+    public void shouldThrowCustomerNotFoundExceptionWhenArchivingNonExistingCustomer() {
         UUID nonExistingId = UUID.randomUUID();
 
         Assertions.assertThatExceptionOfType(CustomerNotFoundException.class)
@@ -156,7 +144,7 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
     }
 
     @Test
-    void shouldThrowCustomerArchivedExceptionWhenArchivingAlreadyArchivedCustomer() {
+    public void shouldThrowCustomerArchivedExceptionWhenArchivingAlreadyArchivedCustomer() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
@@ -166,4 +154,5 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class)
                 .isThrownBy(() -> customerManagementApplicationService.archive(customerId));
     }
+
 }

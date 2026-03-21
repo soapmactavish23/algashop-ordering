@@ -1,14 +1,14 @@
 create table public.shopping_cart (
-      id uuid not null,
-      created_at timestamp with time zone,
-      created_by_user_id uuid,
-      last_modified_at timestamp with time zone,
-      last_modified_by_user_id uuid,
-      total_amount numeric(38,2),
-      total_items integer,
-      version bigint,
-      customer_id uuid not null,
-      primary key (id)
+                                      id uuid not null,
+                                      created_at timestamp with time zone,
+                                      created_by_user_id uuid,
+                                      last_modified_at timestamp with time zone,
+                                      last_modified_by_user_id uuid,
+                                      total_amount numeric(38,2),
+                                      total_items integer,
+                                      version bigint,
+                                      customer_id uuid not null,
+                                      primary key (id)
 );
 
 
