@@ -1,12 +1,20 @@
 package com.algaworks.algashop.ordering.application.shoppingcart;
 
 import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.application.shoppingcart.management.ShoppingCartItemInput;
-import com.algaworks.algashop.ordering.application.shoppingcart.management.ShoppingCartManagementApplicationService;
-import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.domain.model.customer.*;
-import com.algaworks.algashop.ordering.domain.model.product.*;
-import com.algaworks.algashop.ordering.domain.model.shoppingcart.*;
+import com.algaworks.algashop.ordering.core.application.shoppingcart.management.ShoppingCartItemInput;
+import com.algaworks.algashop.ordering.core.application.shoppingcart.management.ShoppingCartManagementApplicationService;
+import com.algaworks.algashop.ordering.core.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerAlreadyHaveShoppingCartException;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
+import com.algaworks.algashop.ordering.core.domain.model.product.Product;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductCatalogService;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductNotFoundException;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductOutOfStockException;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.*;
+import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
+import com.algaworks.algashop.ordering.core.model.customer.*;
+import com.algaworks.algashop.ordering.core.model.product.*;
 import com.algaworks.algashop.ordering.infrastructure.listener.shoppingcart.ShoppingCartEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +51,7 @@ class ShoppingCartManagementApplicationServiceIT extends AbstractApplicationIT {
         UUID newShoppingCartId = service.createNew(customer.id().value());
 
         Assertions.assertThat(newShoppingCartId).isNotNull();
-        Optional<ShoppingCart> createdCart = shoppingCarts.ofId(new com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartId(newShoppingCartId));
+        Optional<ShoppingCart> createdCart = shoppingCarts.ofId(new ShoppingCartId(newShoppingCartId));
         Assertions.assertThat(createdCart).isPresent();
         Assertions.assertThat(createdCart.get().customerId().value()).isEqualTo(customer.id().value());
         Assertions.assertThat(createdCart.get().isEmpty()).isTrue();

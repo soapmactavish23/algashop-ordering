@@ -1,13 +1,16 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
-import com.algaworks.algashop.ordering.application.customer.query.CustomerOutput;
-import com.algaworks.algashop.ordering.application.customer.query.CustomerQueryService;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedException;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerRegisteredEvent;
+import com.algaworks.algashop.ordering.core.application.customer.management.CustomerInput;
+import com.algaworks.algashop.ordering.core.application.customer.management.CustomerManagementApplicationService;
+import com.algaworks.algashop.ordering.core.application.customer.management.CustomerUpdateInput;
+import com.algaworks.algashop.ordering.core.application.customer.notification.CustomerNotificationApplicationService;
+import com.algaworks.algashop.ordering.core.application.customer.query.CustomerOutput;
+import com.algaworks.algashop.ordering.core.application.customer.query.CustomerQueryService;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerArchivedEvent;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerArchivedException;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerRegisteredEvent;
 import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

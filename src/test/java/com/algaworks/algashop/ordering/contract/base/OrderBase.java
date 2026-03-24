@@ -1,8 +1,8 @@
 package com.algaworks.algashop.ordering.contract.base;
 
 import com.algaworks.algashop.ordering.application.order.query.OrderDetailOutputTestDataBuilder;
-import com.algaworks.algashop.ordering.application.order.query.OrderQueryService;
-import com.algaworks.algashop.ordering.domain.model.order.OrderNotFoundException;
+import com.algaworks.algashop.ordering.core.application.order.query.OrderQueryService;
+import com.algaworks.algashop.ordering.core.domain.model.order.OrderNotFoundException;
 import com.algaworks.algashop.ordering.presentation.order.OrderController;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,12 @@
 package com.algaworks.algashop.ordering.application.checkout;
 
-import com.algaworks.algashop.ordering.application.commons.AddressData;
-import com.algaworks.algashop.ordering.application.order.query.BillingData;
-import com.algaworks.algashop.ordering.application.order.query.RecipientData;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuilder;
+import com.algaworks.algashop.ordering.core.application.checkout.BuyNowInput;
+import com.algaworks.algashop.ordering.core.application.checkout.ShippingInput;
+import com.algaworks.algashop.ordering.core.application.commons.AddressData;
+import com.algaworks.algashop.ordering.core.application.order.query.BillingData;
+import com.algaworks.algashop.ordering.core.application.order.query.RecipientData;
+import com.algaworks.algashop.ordering.core.model.customer.CustomerTestDataBuilder;
+import com.algaworks.algashop.ordering.core.model.product.ProductTestDataBuilder;
 
 import java.util.UUID;
 

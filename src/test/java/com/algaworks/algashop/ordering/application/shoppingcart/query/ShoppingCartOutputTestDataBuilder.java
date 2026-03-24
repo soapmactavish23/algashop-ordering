@@ -1,5 +1,8 @@
 package com.algaworks.algashop.ordering.application.shoppingcart.query;
 
+import com.algaworks.algashop.ordering.core.application.shoppingcart.query.ShoppingCartItemOutput;
+import com.algaworks.algashop.ordering.core.application.shoppingcart.query.ShoppingCartOutput;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
