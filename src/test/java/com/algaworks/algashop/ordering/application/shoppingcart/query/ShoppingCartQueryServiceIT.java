@@ -1,8 +1,8 @@
 package com.algaworks.algashop.ordering.application.shoppingcart.query;
 
 import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.core.application.shoppingcart.query.ShoppingCartOutput;
-import com.algaworks.algashop.ordering.core.application.shoppingcart.query.ShoppingCartQueryService;
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartOutput;
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForQueryingShoppingCarts;
 import com.algaworks.algashop.ordering.core.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.core.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ShoppingCartQueryServiceIT extends AbstractApplicationIT {
 
     @Autowired
-    private ShoppingCartQueryService queryService;
+    private ForQueryingShoppingCarts queryService;
 
     @Autowired
     private ShoppingCarts shoppingCarts;

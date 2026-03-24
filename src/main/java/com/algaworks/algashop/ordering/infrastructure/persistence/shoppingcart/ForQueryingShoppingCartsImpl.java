@@ -1,9 +1,9 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.shoppingcart;
 
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartOutput;
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForQueryingShoppingCarts;
 import com.algaworks.algashop.ordering.core.application.utility.Mapper;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartNotFoundException;
-import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartOutput;
-import com.algaworks.algashop.ordering.core.ports.out.shoppingcart.ForObtainingShoppingCarts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ShoppingCartQueryServiceImpl implements ForObtainingShoppingCarts {
+public class ForQueryingShoppingCartsImpl implements ForQueryingShoppingCarts {
 
     private final ShoppingCartPersistenceEntityRepository persistenceRepository;
     private final Mapper mapper;
@@ -22,13 +22,13 @@ public class ShoppingCartQueryServiceImpl implements ForObtainingShoppingCarts {
     public ShoppingCartOutput findById(UUID shoppingCartId) {
         return persistenceRepository.findById(shoppingCartId)
                 .map(s -> mapper.convert(s, ShoppingCartOutput.class))
-                .orElseThrow(()->new ShoppingCartNotFoundException(shoppingCartId));
+                .orElseThrow(ShoppingCartNotFoundException::new);
     }
 
     @Override
     public ShoppingCartOutput findByCustomerId(UUID customerId) {
         return persistenceRepository.findByCustomer_Id(customerId)
                 .map(s -> mapper.convert(s, ShoppingCartOutput.class))
-                .orElseThrow(()->ShoppingCartNotFoundException.ofCustomer(customerId));
+                .orElseThrow(ShoppingCartNotFoundException::new);
     }
 }
