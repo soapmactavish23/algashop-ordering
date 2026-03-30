@@ -1,10 +1,10 @@
 package com.algaworks.algashop.ordering.application.customer.query;
 
 import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerFilter;
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerOutput;
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerQueryService;
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerSummaryOutput;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerFilter;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerOutput;
+import com.algaworks.algashop.ordering.core.ports.in.customer.ForQueryingCustomers;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerSummaryOutput;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.core.domain.model.commons.FullName;
 import com.algaworks.algashop.ordering.core.domain.model.customer.Customer;
@@ -20,7 +20,7 @@ import org.springframework.data.domain.Sort;
 class CustomerQueryServiceIT extends AbstractApplicationIT {
 
     @Autowired
-    private CustomerQueryService queryService;
+    private ForQueryingCustomers queryService;
 
     @Autowired
     private Customers customers;

@@ -1,17 +1,17 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.core.application.customer.management.CustomerInput;
-import com.algaworks.algashop.ordering.core.application.customer.management.CustomerManagementApplicationService;
-import com.algaworks.algashop.ordering.core.application.customer.management.CustomerUpdateInput;
-import com.algaworks.algashop.ordering.core.application.customer.notification.CustomerNotificationApplicationService;
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerOutput;
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerQueryService;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerInput;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerUpdateInput;
+import com.algaworks.algashop.ordering.core.ports.in.customer.ForManagingCustomers;
+import com.algaworks.algashop.ordering.core.ports.out.customer.ForNotifyingCustomers;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerOutput;
+import com.algaworks.algashop.ordering.core.ports.in.customer.ForQueryingCustomers;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerArchivedEvent;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerArchivedException;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerNotFoundException;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerRegisteredEvent;
-import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
+import com.algaworks.algashop.ordering.infrastructure.adapters.in.listener.customer.CustomerEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,22 +24,22 @@ import java.util.UUID;
 class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
 
     @Autowired
-    private CustomerManagementApplicationService customerManagementApplicationService;
+    private ForManagingCustomers forManagingCustomers;
 
     @MockitoSpyBean
     private CustomerEventListener customerEventListener;
 
     @MockitoSpyBean
-    private CustomerNotificationApplicationService customerNotificationApplicationService;
+    private ForNotifyingCustomers customerNotificationApplicationService;
 
     @Autowired
-    private CustomerQueryService queryService;
+    private ForQueryingCustomers queryService;
 
     @Test
     public void shouldRegister() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
 
-        UUID customerId = customerManagementApplicationService.create(input);
+        UUID customerId = forManagingCustomers.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
         CustomerOutput customerOutput = queryService.findById(customerId);
@@ -68,7 +68,7 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
                 .listen(Mockito.any(CustomerArchivedEvent.class));
 
         Mockito.verify(customerNotificationApplicationService)
-                .notifyNewRegistration(Mockito.any(CustomerNotificationApplicationService.NotifyNewRegistrationInput.class));
+                .notifyNewRegistration(Mockito.any(ForNotifyingCustomers.NotifyNewRegistrationInput.class));
     }
 
     @Test
@@ -76,10 +76,10 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
         CustomerUpdateInput updateInput = CustomerUpdateInputTestDataBuilder.aCustomerUpdate().build();
 
-        UUID customerId = customerManagementApplicationService.create(input);
+        UUID customerId = forManagingCustomers.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
-        customerManagementApplicationService.update(customerId, updateInput);
+        forManagingCustomers.update(customerId, updateInput);
 
         CustomerOutput customerOutput = queryService.findById(customerId);
 
@@ -104,10 +104,10 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
     @Test
     public void shouldArchiveCustomer() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
-        UUID customerId = customerManagementApplicationService.create(input);
+        UUID customerId = forManagingCustomers.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
-        customerManagementApplicationService.archive(customerId);
+        forManagingCustomers.archive(customerId);
 
         CustomerOutput archivedCustomer = queryService.findById(customerId);
 
@@ -143,19 +143,19 @@ class CustomerManagementApplicationServiceIT extends AbstractApplicationIT {
         UUID nonExistingId = UUID.randomUUID();
 
         Assertions.assertThatExceptionOfType(CustomerNotFoundException.class)
-                .isThrownBy(() -> customerManagementApplicationService.archive(nonExistingId));
+                .isThrownBy(() -> forManagingCustomers.archive(nonExistingId));
     }
 
     @Test
     public void shouldThrowCustomerArchivedExceptionWhenArchivingAlreadyArchivedCustomer() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
-        UUID customerId = customerManagementApplicationService.create(input);
+        UUID customerId = forManagingCustomers.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
-        customerManagementApplicationService.archive(customerId);
+        forManagingCustomers.archive(customerId);
 
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class)
-                .isThrownBy(() -> customerManagementApplicationService.archive(customerId));
+                .isThrownBy(() -> forManagingCustomers.archive(customerId));
     }
 
 }

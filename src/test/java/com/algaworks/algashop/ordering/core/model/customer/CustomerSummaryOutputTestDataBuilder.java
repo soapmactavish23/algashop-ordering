@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.core.model.customer;
 
-import com.algaworks.algashop.ordering.core.application.customer.query.CustomerSummaryOutput;
+import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerSummaryOutput;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;

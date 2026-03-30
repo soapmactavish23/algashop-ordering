@@ -2,7 +2,7 @@ package com.algaworks.algashop.ordering.application.checkout;
 
 import com.algaworks.algashop.ordering.core.application.checkout.BuyNowInput;
 import com.algaworks.algashop.ordering.core.application.checkout.ShippingInput;
-import com.algaworks.algashop.ordering.core.application.commons.AddressData;
+import com.algaworks.algashop.ordering.core.ports.in.commons.AddressData;
 import com.algaworks.algashop.ordering.core.application.order.query.BillingData;
 import com.algaworks.algashop.ordering.core.application.order.query.RecipientData;
 import com.algaworks.algashop.ordering.core.model.customer.CustomerTestDataBuilder;
