@@ -2,7 +2,6 @@ package com.algaworks.algashop.ordering.application.checkout;
 
 import com.algaworks.algashop.ordering.application.AbstractApplicationIT;
 import com.algaworks.algashop.ordering.core.application.checkout.CheckoutApplicationService;
-import com.algaworks.algashop.ordering.core.application.checkout.CheckoutInput;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.core.domain.model.order.*;
@@ -12,6 +11,7 @@ import com.algaworks.algashop.ordering.core.domain.model.order.shipping.OriginAd
 import com.algaworks.algashop.ordering.core.domain.model.order.shipping.ShippingCostService;
 import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.model.product.ProductTestDataBuilder;
+import com.algaworks.algashop.ordering.core.ports.in.checkout.CheckoutInput;
 import com.algaworks.algashop.ordering.domain.model.shopping.ShoppingCartTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCart;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartCantProceedToCheckoutException;
