@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.utils;
 
-import org.springframework.util.ResourceUtils;
+import org.junit.platform.commons.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
