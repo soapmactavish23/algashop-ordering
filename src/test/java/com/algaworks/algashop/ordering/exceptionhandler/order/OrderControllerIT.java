@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.exceptionhandler.order;
 
-import com.algaworks.algashop.ordering.application.checkout.BuyNowInputTestDataBuilder;
+import com.algaworks.algashop.ordering.core.application.checkout.BuyNowInputTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.BuyNowInput;
 import com.algaworks.algashop.ordering.core.ports.out.order.OrderDetailOutput;

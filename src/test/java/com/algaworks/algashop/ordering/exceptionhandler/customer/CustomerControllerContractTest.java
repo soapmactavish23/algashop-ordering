@@ -1,10 +1,10 @@
 package com.algaworks.algashop.ordering.exceptionhandler.customer;
 
-import com.algaworks.algashop.ordering.application.customer.query.CustomerOutputTestDataBuilder;
+import com.algaworks.algashop.ordering.core.application.customer.query.CustomerOutputTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.DomainException;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerNotFoundException;
-import com.algaworks.algashop.ordering.core.model.customer.CustomerSummaryOutputTestDataBuilder;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerSummaryOutputTestDataBuilder;
 import com.algaworks.algashop.ordering.core.ports.in.commons.AddressData;
 import com.algaworks.algashop.ordering.core.ports.in.customer.*;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForQueryingShoppingCarts;

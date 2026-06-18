@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.contract.base;
 
-import com.algaworks.algashop.ordering.application.order.query.OrderDetailOutputTestDataBuilder;
+import com.algaworks.algashop.ordering.core.application.order.query.OrderDetailOutputTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderNotFoundException;
 import com.algaworks.algashop.ordering.core.ports.out.order.ForObtainingOrders;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.order.OrderController;
