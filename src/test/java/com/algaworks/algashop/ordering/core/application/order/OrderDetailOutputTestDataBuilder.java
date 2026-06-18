@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.core.application.order.query;
+package com.algaworks.algashop.ordering.core.application.order;
 
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
@@ -23,6 +23,7 @@ public class OrderDetailOutputTestDataBuilder {
     public static OrderDetailOutput.OrderDetailOutputBuilder placedOrder() {
         return placedOrder(new OrderId().toString());
     }
+
     public static OrderDetailOutput.OrderDetailOutputBuilder placedOrder(String orderId) {
         return OrderDetailOutput.builder()
                 .id(orderId)
@@ -79,8 +80,8 @@ public class OrderDetailOutputTestDataBuilder {
                 .items(itemsOutput(orderId));
     }
 
-    private static List itemsOutput(String orderId) {
-        List items = new ArrayList<>();
+    private static List<OrderItemDetailOutput> itemsOutput(String orderId) {
+        List<OrderItemDetailOutput> items = new ArrayList<>();
         items.add(OrderItemDetailOutput.builder()
                 .id(new OrderItemId().toString())
                 .orderId(orderId)

@@ -1,12 +1,10 @@
-package com.algaworks.algashop.ordering.core.application.order.management;
+package com.algaworks.algashop.ordering.core.application.order;
 
 import com.algaworks.algashop.ordering.core.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.core.ports.in.customer.ForAddingLoyaltyPoints;
-import com.algaworks.algashop.ordering.core.application.order.OrderManagementApplicationService;
-import com.algaworks.algashop.ordering.core.domain.model.order.*;
+import com.algaworks.algashop.ordering.core.application.customer.CustomerLoyaltyPointsApplicationService;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
-import com.algaworks.algashop.ordering.core.domain.model.order.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.core.domain.model.order.*;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.listener.order.OrderEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +18,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Import(OrderEventListener.class)
-class OrderManagementApplicationServiceIT extends AbstractApplicationIT {
+class OrderManagementApplicationServiceIT
+        extends AbstractApplicationIT {
 
     @Autowired
     private OrderManagementApplicationService service;
@@ -35,7 +34,7 @@ class OrderManagementApplicationServiceIT extends AbstractApplicationIT {
     private OrderEventListener orderEventListener;
 
     @MockitoSpyBean
-    private ForAddingLoyaltyPoints loyaltyPointsApplicationService;
+    private CustomerLoyaltyPointsApplicationService loyaltyPointsApplicationService;
 
     @BeforeEach
     public void setup() {
