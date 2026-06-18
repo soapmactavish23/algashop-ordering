@@ -1,9 +1,9 @@
 package com.algaworks.algashop.ordering.infrastructure.adapters.in.listener.customer;
 
-import com.algaworks.algashop.ordering.core.application.customer.ForAddingLoyaltyPoints;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerArchivedEvent;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerRegisteredEvent;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderReadyEvent;
+import com.algaworks.algashop.ordering.core.ports.in.customer.ForAddingLoyaltyPoints;
 import com.algaworks.algashop.ordering.core.ports.in.customer.ForConfirmCustomerRegistration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

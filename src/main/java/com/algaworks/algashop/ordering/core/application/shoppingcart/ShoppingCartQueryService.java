@@ -4,10 +4,12 @@ import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForQueryingSho
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartOutput;
 import com.algaworks.algashop.ordering.core.ports.out.shoppingcart.ForObtainingShoppingCarts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Primary
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartQueryService implements ForQueryingShoppingCarts {
