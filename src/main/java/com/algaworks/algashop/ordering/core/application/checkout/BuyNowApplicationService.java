@@ -17,7 +17,9 @@ import com.algaworks.algashop.ordering.core.domain.model.product.ProductCatalogS
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.BuyNowInput;
+import com.algaworks.algashop.ordering.core.ports.in.checkout.ForBuyingProduct;
 import com.algaworks.algashop.ordering.core.ports.in.order.ShippingInput;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class BuyNowApplicationService {
+public class BuyNowApplicationService implements ForBuyingProduct {
 
     private final BuyNowService buyNowService;
     private final ProductCatalogService productCatalogService;
@@ -41,6 +43,7 @@ public class BuyNowApplicationService {
     private final BillingInputDisassembler billingInputDisassembler;
 
     @Transactional
+    @Override
     public String buyNow(BuyNowInput input) {
         Objects.requireNonNull(input);
 
@@ -50,8 +53,8 @@ public class BuyNowApplicationService {
         ProductId productId = new ProductId(input.getProductId());
         CreditCardId creditCardId = null;
 
-        if(paymentMethod.equals(PaymentMethod.CREDIT_CARD)) {
-            if(input.getCreditCardId() == null) {
+        if (paymentMethod.equals(PaymentMethod.CREDIT_CARD)) {
+            if (input.getCreditCardId() == null) {
                 throw new DomainException("Credit card id is required");
             }
             creditCardId = new CreditCardId(input.getCreditCardId());

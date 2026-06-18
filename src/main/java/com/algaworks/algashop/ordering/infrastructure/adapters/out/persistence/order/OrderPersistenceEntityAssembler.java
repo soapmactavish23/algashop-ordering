@@ -40,7 +40,7 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setBilling(toBillingEmbeddable(order.billing()));
         orderPersistenceEntity.setShipping(toShippingEmbeddable(order.shipping()));
 
-        if(order.creditCardId() != null) {
+        if (order.creditCardId() != null) {
             orderPersistenceEntity.setCreditCardId(order.creditCardId().id());
         }
 
@@ -108,6 +108,7 @@ public class OrderPersistenceEntityAssembler {
                 .document(billing.document().value())
                 .phone(billing.phone().value())
                 .address(toAddressEmbeddable(billing.address()))
+                .email(billing.email().value())
                 .build();
     }
 

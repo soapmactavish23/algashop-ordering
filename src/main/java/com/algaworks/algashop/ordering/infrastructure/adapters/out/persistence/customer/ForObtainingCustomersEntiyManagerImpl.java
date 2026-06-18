@@ -24,7 +24,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ForObtainingCustomersEntityManagerImpl implements ForObtainingCustomers {
+public class ForObtainingCustomersEntiyManagerImpl implements ForObtainingCustomers {
 
     private final EntityManager entityManager;
 
