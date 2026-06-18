@@ -1,25 +1,25 @@
 package com.algaworks.algashop.ordering.core.model.order;
 
+import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
 import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.core.domain.model.order.Order;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderStatus;
 import com.algaworks.algashop.ordering.core.domain.model.order.Orders;
 import com.algaworks.algashop.ordering.core.model.customer.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
-import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityAssembler;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityDisassembler;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomersPersistenceProvider;
+import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityAssembler;
+import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrdersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 

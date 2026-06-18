@@ -1,14 +1,14 @@
-package com.algaworks.algashop.ordering.core.model.order;
+package com.algaworks.algashop.ordering.core.domain.model.order;
 
 import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.core.domain.model.order.*;
-import com.algaworks.algashop.ordering.core.model.product.ProductTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductOutOfStockException;
-import com.algaworks.algashop.ordering.core.domain.model.product.Product;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductName;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductName;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductOutOfStockException;
+import com.algaworks.algashop.ordering.core.model.order.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.core.model.product.ProductTestDataBuilder;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import java.util.Set;
 class OrderTest {
 
     @Test
-    void shouldGenerateDraftOrder() {
+    public void shouldGenerateDraftOrder() {
         CustomerId customerId = new CustomerId();
         Order order = Order.draft(customerId);
 
@@ -33,15 +33,17 @@ class OrderTest {
 
                 o -> Assertions.assertThat(o.placedAt()).isNull(),
                 o -> Assertions.assertThat(o.paidAt()).isNull(),
+                o -> Assertions.assertThat(o.canceledAt()).isNull(),
                 o -> Assertions.assertThat(o.readyAt()).isNull(),
                 o -> Assertions.assertThat(o.billing()).isNull(),
                 o -> Assertions.assertThat(o.shipping()).isNull(),
                 o -> Assertions.assertThat(o.paymentMethod()).isNull()
-                );
+
+        );
     }
 
     @Test
-    void shouldAddItem() {
+    public void shouldAddItem() {
         Order order = Order.draft(new CustomerId());
         Product product = ProductTestDataBuilder.aProductAltMousePad().build();
         ProductId productId = product.id();
@@ -62,7 +64,7 @@ class OrderTest {
     }
 
     @Test
-    void shouldGenerateExceptionWhenTryToChangeItemSet() {
+    public void shouldGenerateExceptionWhenTryToChangeItemSet() {
         Order order = Order.draft(new CustomerId());
         Product product = ProductTestDataBuilder.aProductAltMousePad().build();
 
@@ -75,7 +77,7 @@ class OrderTest {
     }
 
     @Test
-    void shouldCalculateTotals() {
+    public void shouldCalculateTotals() {
         Order order = Order.draft(new CustomerId());
 
         order.addItem(
@@ -93,14 +95,14 @@ class OrderTest {
     }
 
     @Test
-    void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
+    public void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
         Order order = OrderTestDataBuilder.anOrder().build();
         order.place();
         Assertions.assertThat(order.isPlaced()).isTrue();
     }
 
     @Test
-    void givenPlacedOrder_whenMarkAsPaid_shouldChangeToPaid() {
+    public void givenPlacedOrder_whenMarkAsPaid_shouldChangeToPaid() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         order.markAsPaid();
         Assertions.assertThat(order.isPaid()).isTrue();
@@ -108,23 +110,22 @@ class OrderTest {
     }
 
     @Test
-    void givenPlacedOrder_whenTryToPlace_shouldGenerateException() {
+    public void givenPlacedOrder_whenTryToPlace_shouldGenerateException() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
                 .isThrownBy(order::place);
     }
 
     @Test
-    void givenDraftOrder_whenChangePaymentMethod_shouldAllowChange() {
+    public void givenDraftOrder_whenChangePaymentMethod_shouldAllowChange() {
         Order order = Order.draft(new CustomerId());
         order.changePaymentMethod(PaymentMethod.CREDIT_CARD, new CreditCardId());
         Assertions.assertWith(order.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
     }
 
     @Test
-    void givenDraftOrder_whenChangeBilling_shouldAllowChange() {
+    public void givenDraftOrder_whenChangeBilling_shouldAllowChange() {
         Billing billing = OrderTestDataBuilder.aBilling();
-
         Order order = Order.draft(new CustomerId());
         order.changeBilling(billing);
 
@@ -132,7 +133,7 @@ class OrderTest {
     }
 
     @Test
-    void givenDraftOrder_whenChangeShipping_shouldAllowChange() {
+    public void givenDraftOrder_whenChangeShipping_shouldAllowChange() {
         Shipping shipping = OrderTestDataBuilder.aShipping();
         Order order = Order.draft(new CustomerId());
         Money expectedTotalAmount = order.totalAmount().add(shipping.cost());
@@ -141,11 +142,12 @@ class OrderTest {
 
         Assertions.assertWith(order,
                 o -> Assertions.assertThat(o.shipping()).isEqualTo(shipping),
-                o -> Assertions.assertThat(o.totalAmount()).isEqualTo(expectedTotalAmount));
+                o -> Assertions.assertThat(o.totalAmount()).isEqualTo(expectedTotalAmount)
+        );
     }
 
     @Test
-    void givenDraftOrderAndDeliveryDateInThePast_whenChangeShipping_shouldNotAllowChange() {
+    public void givenDraftOrderAndDeliveryDateInThePast_whenChangeShipping_shouldNotAllowChange() {
         LocalDate expectedDeliveryDate = LocalDate.now().minusDays(2);
 
         Shipping shipping = OrderTestDataBuilder.aShipping().toBuilder()
@@ -159,7 +161,7 @@ class OrderTest {
     }
 
     @Test
-    void givenDraftOrder_whenChangeItem_shouldRecalculate() {
+    public void givenDraftOrder_whenChangeItem_shouldRecalculate() {
         Order order = Order.draft(new CustomerId());
 
         order.addItem(
@@ -178,7 +180,7 @@ class OrderTest {
     }
 
     @Test
-    void givenOutOfStockProduct_whenTryToAddToAnOrder_shouldNotAllow() {
+    public void givenOutOfStockProduct_whenTryToAddToAnOrder_shouldNotAllow() {
         Order order = Order.draft(new CustomerId());
 
         ThrowableAssert.ThrowingCallable addItemTask = () -> order.addItem(

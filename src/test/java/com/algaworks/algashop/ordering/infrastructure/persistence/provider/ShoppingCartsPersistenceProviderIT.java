@@ -2,10 +2,9 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
 import com.algaworks.algashop.ordering.core.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCart;
 import com.algaworks.algashop.ordering.core.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.shopping.ShoppingCartTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCart;
-import com.algaworks.algashop.ordering.infrastructure.config.auditing.SpringDataAuditingConfig;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomersPersistenceProvider;
@@ -13,10 +12,11 @@ import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.s
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.shoppingcart.ShoppingCartPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.shoppingcart.ShoppingCartsPersistenceProvider;
+import com.algaworks.algashop.ordering.infrastructure.config.auditing.SpringDataAuditingConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Propagation;
