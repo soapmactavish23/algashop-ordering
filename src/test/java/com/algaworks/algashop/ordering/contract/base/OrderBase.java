@@ -9,6 +9,7 @@ import com.algaworks.algashop.ordering.core.ports.in.checkout.BuyNowInput;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.CheckoutInput;
 import com.algaworks.algashop.ordering.core.ports.in.order.ForQueryingOrders;
 import com.algaworks.algashop.ordering.core.ports.in.order.OrderFilter;
+import com.algaworks.algashop.ordering.core.ports.out.order.ForObtainingOrders;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.order.OrderController;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -37,6 +39,9 @@ public class OrderBase {
 
     @MockitoBean
     private CheckoutApplicationService checkoutApplicationService;
+
+    @MockitoBean
+    private ForObtainingOrders forObtainingOrders;
 
     public static final String validOrderId = "01226N0640J7Q";
 
@@ -64,10 +69,24 @@ public class OrderBase {
         Mockito.when(orderQueryService.findById(notFoundOrderId))
                 .thenThrow(new OrderNotFoundException());
 
-        Mockito.when(orderQueryService.filter(Mockito.any(OrderFilter.class)))
+        Mockito.when(forObtainingOrders.filter(Mockito.any(OrderFilter.class)))
                 .thenReturn(new PageImpl<>(
-                        List.of(OrderSummaryOutputTestDataBuilder.placedOrder().id(validOrderId).build())
+                        List.of(OrderSummaryOutputTestDataBuilder.placedOrder()
+                                .id(validOrderId)
+                                .build()),
+                        PageRequest.of(0, 1),
+                        1
                 ));
+
+        Mockito.when(forObtainingOrders.findById(validOrderId))
+                .thenReturn(
+                        OrderDetailOutputTestDataBuilder
+                                .placedOrder(validOrderId)
+                                .build()
+                );
+
+        Mockito.when(forObtainingOrders.findById(notFoundOrderId))
+                .thenThrow(new OrderNotFoundException());
     }
 
 }
