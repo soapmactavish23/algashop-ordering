@@ -1,19 +1,11 @@
 package com.algaworks.algashop.ordering.core.application.shoppingcart;
 
 import com.algaworks.algashop.ordering.core.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartItemInput;
-import com.algaworks.algashop.ordering.core.domain.model.customer.Customer;
-import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerAlreadyHaveShoppingCartException;
-import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerNotFoundException;
-import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
-import com.algaworks.algashop.ordering.core.domain.model.product.Product;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductCatalogService;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductNotFoundException;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductOutOfStockException;
-import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.*;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestDataBuilder;
+import com.algaworks.algashop.ordering.core.domain.model.customer.*;
+import com.algaworks.algashop.ordering.core.domain.model.product.*;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.*;
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartItemInput;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.listener.shoppingcart.ShoppingCartEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,7 +17,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import java.util.Optional;
 import java.util.UUID;
 
-class ShoppingCartManagementApplicationServiceIT extends AbstractApplicationIT {
+class ShoppingCartManagementApplicationServiceIT
+        extends AbstractApplicationIT {
 
     @Autowired
     private ShoppingCartManagementApplicationService service;

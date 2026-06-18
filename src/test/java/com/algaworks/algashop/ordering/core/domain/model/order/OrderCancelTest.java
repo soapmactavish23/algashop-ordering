@@ -32,4 +32,18 @@ public class OrderCancelTest {
         );
     }
 
+    @Test
+    void givenCanceledOrder_whenCancelAgain_shouldThrowException() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build();
+
+        Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
+                .isThrownBy(order::cancel);
+
+        Assertions.assertWith(order,
+                (i) -> Assertions.assertThat(i.status()).isEqualTo(OrderStatus.CANCELED),
+                (i) -> Assertions.assertThat(i.isCanceled()).isTrue(),
+                (i) -> Assertions.assertThat(i.canceledAt()).isNotNull()
+        );
+    }
+
 }

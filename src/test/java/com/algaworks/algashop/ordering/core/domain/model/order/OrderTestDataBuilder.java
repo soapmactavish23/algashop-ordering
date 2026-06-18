@@ -1,15 +1,16 @@
 package com.algaworks.algashop.ordering.core.domain.model.order;
 
 import com.algaworks.algashop.ordering.core.domain.model.commons.*;
-import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestDataBuilder;
 
 import java.time.LocalDate;
 
+import static com.algaworks.algashop.ordering.core.domain.model.customer.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
 public class OrderTestDataBuilder {
 
-    private CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+    private CustomerId customerId = DEFAULT_CUSTOMER_ID;
 
     private PaymentMethod paymentMethod = PaymentMethod.GATEWAY_BALANCE;
 

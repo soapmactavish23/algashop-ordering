@@ -21,7 +21,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.time.LocalDate;
 import java.util.Optional;
 
-class BuyNowApplicationServiceIT extends AbstractApplicationIT {
+class BuyNowApplicationServiceIT
+        extends AbstractApplicationIT {
 
     @Autowired
     private BuyNowApplicationService buyNowApplicationService;
@@ -39,14 +40,14 @@ class BuyNowApplicationServiceIT extends AbstractApplicationIT {
     private ShippingCostService shippingCostService;
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         if (!customers.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
             customers.add(CustomerTestDataBuilder.existingCustomer().build());
         }
     }
 
     @Test
-    void shouldBuyNow() {
+    public void shouldBuyNow() {
         Product product = ProductTestDataBuilder.aProduct().build();
         Mockito.when(productCatalogService.ofId(product.id())).thenReturn(Optional.of(product));
 

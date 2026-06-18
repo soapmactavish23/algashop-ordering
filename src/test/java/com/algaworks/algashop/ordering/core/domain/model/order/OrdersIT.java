@@ -1,22 +1,14 @@
 package com.algaworks.algashop.ordering.core.domain.model.order;
 
+import com.algaworks.algashop.ordering.core.domain.model.AbstractDomainIT;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
-import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityAssembler;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityDisassembler;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomersPersistenceProvider;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityAssembler;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityDisassembler;
-import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrdersPersistenceProvider;
+import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.time.Year;
@@ -25,19 +17,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@Import({OrdersPersistenceProvider.class,
-        OrderPersistenceEntityAssembler.class,
-        OrderPersistenceEntityDisassembler.class,
-        CustomersPersistenceProvider.class,
-        CustomerPersistenceEntityAssembler.class,
-        CustomerPersistenceEntityDisassembler.class
-})
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class OrdersIT {
+class OrdersIT extends AbstractDomainIT {
 
-    private final Orders orders;
-    private final Customers customers;
+    private Orders orders;
+    private Customers customers;
 
     @Autowired
     public OrdersIT(Orders orders, Customers customers) {
@@ -47,13 +30,15 @@ class OrdersIT {
 
     @BeforeEach
     public void setup() {
-        if(!customers.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
-            customers.add(CustomerTestDataBuilder.existingCustomer().build());
+        if (!customers.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
+            customers.add(
+                    CustomerTestDataBuilder.existingCustomer().build()
+            );
         }
     }
 
     @Test
-    void shouldPersistAndFind() {
+    public void shouldPersistAndFind() {
         Order originalOrder = OrderTestDataBuilder.anOrder().build();
         OrderId orderId = originalOrder.id();
         orders.add(originalOrder);
@@ -79,7 +64,7 @@ class OrdersIT {
     }
 
     @Test
-    void shouldUpdateExistingOrder() {
+    public void shouldUpdateExistingOrder() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         orders.add(order);
 
@@ -95,7 +80,7 @@ class OrdersIT {
     }
 
     @Test
-    void shouldNotAllowStaleUpdates() {
+    public void shouldNotAllowStaleUpdates() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         orders.add(order);
 
@@ -118,7 +103,7 @@ class OrdersIT {
     }
 
     @Test
-    void shouldCountExistingOrders() {
+    public void shouldCountExistingOrders() {
         Assertions.assertThat(orders.count()).isZero();
 
         Order order1 = OrderTestDataBuilder.anOrder().build();
@@ -131,20 +116,32 @@ class OrdersIT {
     }
 
     @Test
-    void shouldReturnIfOrderExists() {
+    public void shouldReturnIfOrderExists() {
         Order order = OrderTestDataBuilder.anOrder().build();
         orders.add(order);
 
         Assertions.assertThat(orders.exists(order.id())).isTrue();
         Assertions.assertThat(orders.exists(new OrderId())).isFalse();
+
     }
 
     @Test
     public void shouldListExistingOrdersByYear() {
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build());
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build());
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build());
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.DRAFT).build());
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.DRAFT).build()
+        );
 
         CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 
@@ -157,6 +154,7 @@ class OrdersIT {
 
         listedOrders = orders.placedByCustomerInYear(new CustomerId(), Year.now());
         Assertions.assertThat(listedOrders).isEmpty();
+
     }
 
     @Test
@@ -167,15 +165,22 @@ class OrdersIT {
         orders.add(order1);
         orders.add(order2);
 
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build());
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build());
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build()
+        );
 
         Money expectedTotalAmount = order1.totalAmount().add(order2.totalAmount());
 
         CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 
         Assertions.assertThat(orders.totalSoldForCustomer(customerId)).isEqualTo(expectedTotalAmount);
+
         Assertions.assertThat(orders.totalSoldForCustomer(new CustomerId())).isEqualTo(Money.ZERO);
+
     }
 
     @Test
@@ -186,14 +191,18 @@ class OrdersIT {
         orders.add(order1);
         orders.add(order2);
 
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build());
-        orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build());
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build()
+        );
 
         CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 
         Assertions.assertThat(orders.salesQuantityByCustomerInYear(customerId, Year.now())).isEqualTo(2L);
-        Assertions.assertThat(orders.salesQuantityByCustomerInYear(customerId, Year.now().minusYears(2)))
-                .isZero();
+        Assertions.assertThat(orders.salesQuantityByCustomerInYear(customerId, Year.now().minusYears(1))).isZero();
     }
 
 }

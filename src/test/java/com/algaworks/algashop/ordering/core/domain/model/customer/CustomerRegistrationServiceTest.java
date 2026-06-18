@@ -21,30 +21,30 @@ class CustomerRegistrationServiceTest {
     private CustomerRegistrationService customerRegistrationService;
 
     @Test
-    void shouldRegister() {
+    public void shouldRegister() {
         Mockito.when(customers.isEmailUnique(Mockito.any(Email.class), Mockito.any(CustomerId.class)))
                 .thenReturn(true);
 
         Customer customer = customerRegistrationService.register(
-                new FullName("Jonh", "Doe"),
+                new FullName("John", "Doe"),
                 new BirthDate(LocalDate.of(1991, 7, 5)),
-                new Email("jonhdoe@email.com"),
+                new Email("johndoe@email.com"),
                 new Phone("478-256-2604"),
                 new Document("255-08-0578"),
                 true,
                 Address.builder()
-                        .state("Bourbon Street")
+                        .street("Bourbon Street")
                         .number("1134")
                         .neighborhood("North Ville")
                         .city("Yostfort")
-                        .street("South Carolina")
+                        .state("South Carolina")
                         .zipCode(new ZipCode("70283"))
                         .complement("Apt. 901")
                         .build()
         );
 
-        Assertions.assertThat(customer.fullName()).isEqualTo(new FullName("Jonh", "Doe"));
-        Assertions.assertThat(customer.email()).isEqualTo(new Email("jonhdoe@email.com"));
+        Assertions.assertThat(customer.fullName()).isEqualTo(new FullName("John", "Doe"));
+        Assertions.assertThat(customer.email()).isEqualTo(new Email("johndoe@email.com"));
     }
 
 }

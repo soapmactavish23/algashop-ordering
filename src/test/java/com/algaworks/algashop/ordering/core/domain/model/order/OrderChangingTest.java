@@ -1,14 +1,14 @@
 package com.algaworks.algashop.ordering.core.domain.model.order;
 
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
+import com.algaworks.algashop.ordering.core.domain.model.product.Product;
+import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestDataBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class OrderChangingTest {
+public class OrderChangingTest {
 
     @Test
     void givenDraftOrder_whenChangeIsPerformed_shouldNotThrowException() {
@@ -19,6 +19,7 @@ class OrderChangingTest {
         Billing billing = OrderTestDataBuilder.aBilling();
         Shipping shipping = OrderTestDataBuilder.aShipping();
         PaymentMethod method = PaymentMethod.CREDIT_CARD;
+        CreditCardId creditCardId = new CreditCardId();
 
         OrderItem orderItem = draftOrder.items().iterator().next();
 
@@ -26,7 +27,7 @@ class OrderChangingTest {
         assertThatCode(() -> draftOrder.changeBilling(billing)).doesNotThrowAnyException();
         assertThatCode(() -> draftOrder.changeShipping(shipping)).doesNotThrowAnyException();
         assertThatCode(() -> draftOrder.changeItemQuantity(orderItem.id(), quantity)).doesNotThrowAnyException();
-        assertThatCode(() -> draftOrder.changePaymentMethod(method, new CreditCardId())).doesNotThrowAnyException();
+        assertThatCode(() -> draftOrder.changePaymentMethod(method, creditCardId)).doesNotThrowAnyException();
     }
 
     @Test

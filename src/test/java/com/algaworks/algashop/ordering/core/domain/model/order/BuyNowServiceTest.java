@@ -12,7 +12,6 @@ import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestData
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,24 +24,19 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @ExtendWith(MockitoExtension.class)
 class BuyNowServiceTest {
 
-    @InjectMocks
     private BuyNowService buyNowService;
 
     @Mock
     private Orders orders;
 
-    @Mock
-    private CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification;
-
     @BeforeEach
     void setup() {
-        CustomerHaveFreeShippingSpecification specification = new CustomerHaveFreeShippingSpecification(
+        var specification = new CustomerHaveFreeShippingSpecification(
                 orders,
                 new LoyaltyPoints(100),
-                2,
+                2L,
                 new LoyaltyPoints(2000)
         );
-
         buyNowService = new BuyNowService(specification);
     }
 
@@ -54,9 +48,10 @@ class BuyNowServiceTest {
         Shipping shippingInfo = OrderTestDataBuilder.aShipping();
         Quantity quantity = new Quantity(3);
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
+        CreditCardId creditCardId = new CreditCardId();
 
-        Order order = buyNowService
-                .buyNow(product, customer, billingInfo, shippingInfo, quantity, paymentMethod, new CreditCardId());
+        Order order = buyNowService.buyNow(product, customer, billingInfo,
+                shippingInfo, quantity, paymentMethod, creditCardId);
 
         assertThat(order).isNotNull();
         assertThat(order.id()).isNotNull();
@@ -84,10 +79,11 @@ class BuyNowServiceTest {
         Shipping shippingInfo = OrderTestDataBuilder.aShipping();
         Quantity quantity = new Quantity(1);
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
+        CreditCardId creditCardId = new CreditCardId();
 
         assertThatExceptionOfType(ProductOutOfStockException.class)
-                .isThrownBy(() -> buyNowService
-                        .buyNow(product, customer, billingInfo, shippingInfo, quantity, paymentMethod, new CreditCardId()));
+                .isThrownBy(() -> buyNowService.buyNow(product, customer, billingInfo,
+                        shippingInfo, quantity, paymentMethod, creditCardId));
     }
 
     @Test
@@ -98,10 +94,11 @@ class BuyNowServiceTest {
         Shipping shippingInfo = OrderTestDataBuilder.aShipping();
         Quantity quantity = new Quantity(0);
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
+        CreditCardId creditCardId = new CreditCardId();
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> buyNowService
-                        .buyNow(product, customer, billingInfo, shippingInfo, quantity, paymentMethod, new CreditCardId()));
+                .isThrownBy(() -> buyNowService.buyNow(product, customer, billingInfo, shippingInfo,
+                        quantity, paymentMethod, creditCardId));
     }
 
     @Test
@@ -117,9 +114,10 @@ class BuyNowServiceTest {
         Shipping shippingInfo = OrderTestDataBuilder.aShipping();
         Quantity quantity = new Quantity(3);
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
+        CreditCardId creditCardId = new CreditCardId();
 
-        Order order = buyNowService
-                .buyNow(product, customer, billingInfo, shippingInfo, quantity, paymentMethod, new CreditCardId());
+        Order order = buyNowService.buyNow(product, customer, billingInfo,
+                shippingInfo, quantity, paymentMethod, creditCardId);
 
         assertThat(order).isNotNull();
         assertThat(order.id()).isNotNull();
