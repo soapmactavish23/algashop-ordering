@@ -2,11 +2,13 @@ package com.algaworks.algashop.ordering.infrastructure.adapters.out.web.product.
 
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.exceptionhandler.BadGatewayException;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.exceptionhandler.GatewayTimeoutException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.cloud.client.circuitbreaker.NoFallbackAvailableException;
+import org.springframework.core.retry.RetryException;
 import org.springframework.resilience.annotation.ConcurrencyLimit;
-import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -19,23 +21,45 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ResilientProductCatalogAPIClient {
 
     private final ProductCatalogAPIClient productCatalogAPIClient;
+    private final CircuitBreaker circuitBreaker;
+
+    public ResilientProductCatalogAPIClient(ProductCatalogAPIClient productCatalogAPIClient,
+                                            CircuitBreakerFactory circuitBreakerFactory) {
+        this.productCatalogAPIClient = productCatalogAPIClient;
+        this.circuitBreaker = circuitBreakerFactory.create("productCatalogCB");
+    }
 
     @ConcurrencyLimit(2)
     @Cacheable(cacheNames = "algashop:products-catalog-api:v1", key = "#productId")
-    @Retryable(
-            maxRetries = 3,
-            delayString = "3s",
-            multiplier = 2,
-            includes = {GatewayTimeoutException.class, BadGatewayException.ServerErrorException.class}
-    )
     public Optional<ProductResponse> getById(UUID productId) {
+        log.info("Loading product {}", productId);
         try {
-            return Optional.of(productCatalogAPIClient.getById(productId));
-        } catch(HttpClientErrorException.NotFound e) {
+            return circuitBreaker.run(() -> loadProduct(productId));
+        } catch (NoFallbackAvailableException e) {
+            if(e.getCause() instanceof RetryException re) {
+                if (re.getCause() instanceof GatewayTimeoutException gte) {
+                    throw gte;
+                }
+                if(e.getCause() instanceof BadGatewayException bge) {
+                    throw bge;
+                }
+            }
+            throw e;
+
+        }
+    }
+
+    private Optional<ProductResponse> loadProduct(UUID productId) {
+        log.info("Loading product {}", productId);
+        try {
+            return Optional.ofNullable(productCatalogAPIClient.getById(productId));
+        } catch (HttpClientErrorException e) {
+            if(!(e instanceof HttpClientErrorException.NotFound)) {
+                log.error("Client HTTP error when loading product {}", productId, e);
+            }
             return Optional.empty();
         } catch (RestClientException e) {
             throw translateException(e);
