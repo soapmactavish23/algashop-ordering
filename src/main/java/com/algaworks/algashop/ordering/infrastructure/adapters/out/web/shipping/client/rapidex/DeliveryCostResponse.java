@@ -5,11 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class DeliveryCostResponse {
-
     private String deliveryCost;
-    private Integer estimatedDaysToDeliver;
-
+    private Long estimatedDaysToDeliver;
 }
