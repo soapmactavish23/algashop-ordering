@@ -12,12 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.resilience.annotation.ConcurrencyLimit;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientException;
 
-import java.net.SocketTimeoutException;
-import java.time.Duration;
 import java.util.Optional;
 
 @Slf4j
@@ -25,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductCatalogServiceHttpImpl implements ProductCatalogService {
 
-    private final ProductCatalogAPIClient productCatalogAPIClient;
+    private final ResilientProductCatalogAPIClient productCatalogAPIClient;
 
     @Override
     @ConcurrencyLimit(2)
@@ -36,33 +31,12 @@ public class ProductCatalogServiceHttpImpl implements ProductCatalogService {
             includes = {GatewayTimeoutException.class, BadGatewayException.class}
     )
     public Optional<Product> ofId(ProductId productId) {
-        log.info("Trying to load product {}", productId);
-        try {
-            Thread.sleep(Duration.ofSeconds(3));
-        } catch (Exception e) {}
-
-        ProductResponse productResponse;
-        log.info("Loading product {}", productId);
-        try {
-            productResponse = productCatalogAPIClient.getById(productId.value());
-        } catch (ResourceAccessException e) {
-            throw new GatewayTimeoutException("Product Catalog API Timeout", e);
-        } catch(HttpClientErrorException.NotFound e) {
-            return Optional.empty();
-        } catch (RestClientException e) {
-            if (e.getCause() instanceof SocketTimeoutException) {
-                throw new GatewayTimeoutException("Product Catalog API Timeout", e);
-            }
-            throw new BadGatewayException("Product Catalog API Bad Gateway", e);
-        }
-
-        return Optional.of(
-                Product.builder()
+        return productCatalogAPIClient.getById(productId.value())
+                .map(productResponse -> Product.builder()
                         .id(new ProductId(productResponse.getId()))
                         .name(new ProductName(productResponse.getName()))
                         .inStock(productResponse.getInStock())
                         .price(new Money(productResponse.getSalePrice()))
-                        .build()
-        );
+                        .build());
     }
 }
