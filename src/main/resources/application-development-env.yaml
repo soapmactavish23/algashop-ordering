@@ -1,7 +1,7 @@
 spring:
   cache:
     type: none
-    #type: redis
+  #    type: redis
   datasource:
     url: jdbc:postgresql://localhost:5432/ordering
     username: postgres
@@ -27,6 +27,3 @@ algashop:
     shipping.provider: RAPIDEX
     rapidex.url: http://localhost:8787
     product-catalog.url: http://localhost:8083
-
-logging.level:
-  com.algaworks.algashop.ordering.infrastructure.adapters.in.web.exceptionhandler: OFF
