@@ -23,8 +23,8 @@ import java.util.UUID;
 
 import static com.algaworks.algashop.ordering.infrastructure.config.resilience.SpringCircuitBreakerConfig.productCatalogCBId;
 
-@Slf4j
 @Component
+@Slf4j
 public class ResilientProductCatalogAPIClient {
 
     private final ProductCatalogAPIClient productCatalogAPIClient;
@@ -37,24 +37,25 @@ public class ResilientProductCatalogAPIClient {
         this.circuitBreaker = (FrameworkRetryCircuitBreaker) circuitBreakerFactory.create(productCatalogCBId);
     }
 
-    @ConcurrencyLimit(2)
-    @Cacheable(cacheNames = "algashop:products-catalog-api:v1", key = "#productId")
+    @Cacheable(cacheNames = "algashop:product-catalog-api:v1", key = "#productId")
+    @ConcurrencyLimit(10)
     public Optional<ProductResponse> getById(UUID productId) {
         log.info("Trying to load product {}", productId);
         log.info("Product catalog API CB state is {}", circuitBreaker.getCircuitBreakerPolicy().getState());
+
         try {
-            return circuitBreaker.run(() -> loadProduct(productId));
+            return circuitBreaker.run(()->loadProduct(productId));
         } catch (NoFallbackAvailableException e) {
             throw unwrapException(e);
         }
     }
 
     private RuntimeException unwrapException(NoFallbackAvailableException e) {
-        if(e.getCause() instanceof RetryException re) {
+        if (e.getCause() instanceof RetryException re) {
             if (re.getCause() instanceof GatewayTimeoutException gte) {
                 return gte;
             }
-            if(e.getCause() instanceof BadGatewayException bge) {
+            if (re.getCause() instanceof BadGatewayException bge) {
                 return bge;
             }
         }
@@ -66,8 +67,8 @@ public class ResilientProductCatalogAPIClient {
         try {
             return Optional.ofNullable(productCatalogAPIClient.getById(productId));
         } catch (HttpClientErrorException e) {
-            if(!(e instanceof HttpClientErrorException.NotFound)) {
-//                log.error("Client HTTP error when loading product {}", productId, e);
+            if (!(e instanceof HttpClientErrorException.NotFound)) {
+                log.error("Client HTTP error when loading product {}", productId, e);
             }
             return Optional.empty();
         } catch (RestClientException e) {
@@ -76,11 +77,12 @@ public class ResilientProductCatalogAPIClient {
     }
 
     private RuntimeException translateException(RestClientException e) {
-        if (e.getCause() instanceof SocketTimeoutException || e instanceof ResourceAccessException) {
+        if (e.getCause() instanceof SocketTimeoutException
+                || e instanceof ResourceAccessException) {
             return new GatewayTimeoutException("Product Catalog API Timeout", e);
         }
 
-        if(e instanceof HttpClientErrorException) {
+        if (e instanceof HttpClientErrorException) {
             return new BadGatewayException.ClientErrorException("Product Catalog API Bad Gateway", e);
         }
 
