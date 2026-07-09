@@ -33,9 +33,22 @@ public abstract class AbstractPresentationIT {
         RestAssured.config().jsonConfig(jsonConfig().numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
     }
 
-    protected RequestSpecification givenAuthenticated() {
+    protected RequestSpecification givenAuthenticated(String tokenValue) {
         return RestAssured.given()
-                .header("Authorization", "Bearer " + MockJwtDecoderFactory.DEFAULT_TOKEN_VALUE);
+                .header("Authorization",
+                        "Bearer " + tokenValue);
+    }
+
+    protected RequestSpecification givenAuthenticated() {
+        return givenAuthenticated(MockJwtDecoderFactory.DEFAULT_TOKEN_VALUE);
+    }
+
+    protected RequestSpecification givenWithExpiredToken() {
+        return givenAuthenticated(MockJwtDecoderFactory.EXPIRED_TOKEN_VALUE);
+    }
+
+    protected RequestSpecification givenAuthenticatedWithNoScopeToken() {
+        return givenAuthenticated(MockJwtDecoderFactory.NO_SCOPE_TOKEN_VALUE);
     }
 
     protected static void initWireMock() {
