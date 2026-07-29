@@ -21,8 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.time.LocalDate;
 import java.util.Optional;
 
-class BuyNowApplicationServiceIT
-        extends AbstractApplicationIT {
+class BuyNowApplicationServiceIT extends AbstractApplicationIT {
 
     @Autowired
     private BuyNowApplicationService buyNowApplicationService;
