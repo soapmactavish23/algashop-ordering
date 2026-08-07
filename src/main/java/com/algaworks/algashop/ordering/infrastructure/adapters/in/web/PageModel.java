@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PageModel<T> {
-
     private int number;
     private int size;
     private int totalPages;
@@ -32,5 +31,4 @@ public class PageModel<T> {
                 .totalElements(page.getTotalElements())
                 .build();
     }
-
 }

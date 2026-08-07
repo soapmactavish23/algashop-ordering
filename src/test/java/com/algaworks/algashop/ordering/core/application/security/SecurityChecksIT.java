@@ -11,29 +11,29 @@ import java.util.UUID;
 
 class SecurityChecksIT extends AbstractApplicationIT {
 
-    @Autowired
-    private SecurityChecks securityChecks;
+	@Autowired
+	private SecurityChecks securityChecks;
 
-    @Test
-    void givenAuthenticatedCustomerShouldAllowOrderForHimSelf() {
-        UUID customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID.value();
-        boolean canOrderFor = securityChecks.canOrderFor(customerId);
-        Assertions.assertThat(canOrderFor).isTrue();
-    }
+	@Test
+	void givenAuthenticatedCustomerShouldAllowOrderForHimself() {
+		UUID customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID.value();
+		boolean canOrderFor = securityChecks.canOrderFor(customerId);
+		Assertions.assertThat(canOrderFor).isTrue();
+	}
 
-    @Test
-    @WithMockJwt(role = "", audiences = "machine-client-id", subject = "machine-client-id")
-    void givenAuthenticatedMachineSholdNotAllowOrder() {
-        UUID customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID.value();
-        boolean canOrderFor = securityChecks.canOrderFor(customerId);
-        Assertions.assertThat(canOrderFor).isFalse();
-    }
+	@Test
+	@WithMockJwt(role = "", audiences = "machine-client-id", subject = "machine-client-id")
+	void givenAuthenticatedMachineShouldNotAllowOrder() {
+		UUID customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID.value();
+		boolean canOrderFor = securityChecks.canOrderFor(customerId);
+		Assertions.assertThat(canOrderFor).isFalse();
+	}
 
-    @Test
-    @WithMockJwt(role = "", audiences = "machine-client-id", subject = "machine-client-id")
-    void givenAuthenticatedMachineShouldReturnTrue() {
-        boolean machineAuthenticated = securityChecks.isMachineAuthenticated();
-        Assertions.assertThat(machineAuthenticated).isTrue();
-    }
+	@Test
+	@WithMockJwt(role = "", audiences = "machine-client-id", subject = "machine-client-id")
+	void givenAuthenticatedMachineShouldReturnTrue() {
+		boolean machineAuthenticated = securityChecks.isMachineAuthenticated();
+		Assertions.assertThat(machineAuthenticated).isTrue();
+	}
 
 }

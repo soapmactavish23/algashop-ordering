@@ -11,7 +11,9 @@ import java.util.UUID;
 
 import static com.algaworks.algashop.ordering.core.domain.model.ErrorMessages.VALIDATION_ERROR_FULLNAME_IS_NULL;
 
-public class Customer extends AbstractEventSourceEntity implements AggregateRoot<CustomerId> {
+public class Customer
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<CustomerId> {
     private CustomerId id;
     private FullName fullName;
     private BirthDate birthDate;
@@ -29,10 +31,9 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
 
     @Builder(builderClassName = "BrandNewCustomerBuild", builderMethodName = "brandNew")
     private static Customer createBrandNew(CustomerId id, FullName fullName, BirthDate birthDate, Email email,
-                                           Phone phone, Document document, Boolean promotionNotificationsAllowed,
-                                           Address address) {
-
-        if(id == null) {
+                                    Phone phone, Document document, Boolean promotionNotificationsAllowed,
+                                    Address address) {
+        if (id == null) {
             id = new CustomerId();
         }
 
@@ -50,16 +51,16 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
                 LoyaltyPoints.ZERO,
                 address);
 
-        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
-                customer.fullName(), customer.email()));
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(),
+                customer.registeredAt(), customer.fullName(), customer.email()));
 
         return customer;
     }
 
     @Builder(builderClassName = "ExistingCustomerBuild", builderMethodName = "existing")
     private Customer(CustomerId id, Long version, FullName fullName, BirthDate birthDate, Email email, Phone phone,
-                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
-                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
+                    Document document, Boolean promotionNotificationsAllowed, Boolean archived,
+                    OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
         this.setVersion(version);
         this.setFullName(fullName);
@@ -74,7 +75,7 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
         this.setLoyaltyPoints(loyaltyPoints);
         this.setAddress(address);
     }
-
+    
     public void addLoyaltyPoints(LoyaltyPoints loyaltyPointsAdded) {
         verifyIfChangeable();
         if (loyaltyPointsAdded.equals(LoyaltyPoints.ZERO)) {
@@ -82,7 +83,7 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
         }
         this.setLoyaltyPoints(this.loyaltyPoints().add(loyaltyPointsAdded));
     }
-
+    
     public void archive() {
         verifyIfChangeable();
         this.setArchived(true);
@@ -98,29 +99,28 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
                 .complement(null).build());
 
         this.publishDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt()));
-
     }
 
     public void enablePromotionNotifications() {
         verifyIfChangeable();
         this.setPromotionNotificationsAllowed(true);
     }
-
+    
     public void disablePromotionNotifications() {
         verifyIfChangeable();
         this.setPromotionNotificationsAllowed(false);
     }
-
+    
     public void changeName(FullName fullName) {
         verifyIfChangeable();
         this.setFullName(fullName);
     }
-
+    
     public void changeEmail(Email email) {
         verifyIfChangeable();
         this.setEmail(email);
-    }
-
+    } 
+    
     public void changePhone(Phone phone) {
         verifyIfChangeable();
         this.setPhone(phone);
@@ -183,7 +183,7 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
         return version;
     }
 
-    public void setVersion(Long version) {
+    private void setVersion(Long version) {
         this.version = version;
     }
 

@@ -28,7 +28,7 @@ public class ResilientRapiDexAPIClient {
     private final FrameworkRetryCircuitBreaker circuitBreaker;
 
     public ResilientRapiDexAPIClient(CircuitBreakerFactory<FrameworkRetryConfig,
-                                             FrameworkRetryConfigBuilder> circuitBreakerFactory,
+                                        FrameworkRetryConfigBuilder> circuitBreakerFactory,
                                      RapiDexAPIClient rapiDexAPIClient) {
         this.rapiDexAPIClient = rapiDexAPIClient;
         this.circuitBreaker = (FrameworkRetryCircuitBreaker) circuitBreakerFactory.create(rapidexAPICBId);

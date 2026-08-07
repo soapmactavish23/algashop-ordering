@@ -6,7 +6,8 @@ import com.algaworks.algashop.ordering.core.domain.model.customer.LoyaltyPoints;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CustomerHasEnoughLoyaltyPointsSpecification implements Specification<Customer> {
+public class CustomerHasEnoughLoyaltyPointsSpecification
+        implements Specification<Customer> {
 
     private final LoyaltyPoints expectedLoyaltyPoints;
 
@@ -14,5 +15,4 @@ public class CustomerHasEnoughLoyaltyPointsSpecification implements Specificatio
     public boolean isSatisfiedBy(Customer customer) {
         return customer.loyaltyPoints().compareTo(expectedLoyaltyPoints) >= 0;
     }
-
 }

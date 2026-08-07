@@ -20,7 +20,7 @@ public class RedisCacheConfig {
                 .computePrefixWith(c -> c + ":")
                 .entryTtl(Duration.ofMinutes(1));
         return (builder) -> builder.cacheDefaults(defaultCacheConfig)
-                .withCacheConfiguration("algashop:products-catalog-api:v1",
+                .withCacheConfiguration("algashop:product-catalog-api:v1",
                         defaultCacheConfig.disableCachingNullValues().entryTtl(Duration.ofMinutes(5)));
     }
 

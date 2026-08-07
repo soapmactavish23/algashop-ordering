@@ -21,15 +21,15 @@ import java.util.Collections;
 public class ProductCatalogAPIConfig {
 
     @Bean
-    public ProductCatalogAPIClient productCatalogAPIClient(
-            RestClient.Builder builder,
-            ProductCatalogIntegrationProperties properties,
-            @Qualifier("productCatalogAPIClientInterceptor") OAuth2ClientHttpRequestInterceptor interceptor) {
+    public ProductCatalogAPIClient productCatalogAPIClient(RestClient.Builder builder,
+           ProductCatalogIntegrationProperties properties,
+           @Qualifier("productCatalogAPIClientInterceptor") OAuth2ClientHttpRequestInterceptor interceptor) {
 
         RestClient restClient = builder.baseUrl(properties.getUrl())
                 .requestFactory(generateClientHttpRequestFactory())
                 .requestInterceptor(interceptor)
                 .build();
+
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(adapter).build();
         return proxyFactory.createClient(ProductCatalogAPIClient.class);

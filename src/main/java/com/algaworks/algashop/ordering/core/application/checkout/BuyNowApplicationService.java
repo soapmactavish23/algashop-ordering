@@ -19,8 +19,7 @@ import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.BuyNowInput;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.ForBuyingProduct;
-import com.algaworks.algashop.ordering.core.ports.in.order.ShippingInput;
-
+import com.algaworks.algashop.ordering.core.ports.in.checkout.ShippingInput;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -52,7 +51,7 @@ public class BuyNowApplicationService implements ForBuyingProduct {
     @Override
     public String buyNow(BuyNowInput input) {
         Objects.requireNonNull(input);
-        
+
         verifyCanOrderFor(input.getCustomerId());
 
         PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
@@ -86,11 +85,11 @@ public class BuyNowApplicationService implements ForBuyingProduct {
         return order.id().toString();
     }
 
-    private void verifyCanOrderFor(@NotNull UUID customerId) {
-        if(!securityCheck.canOrderFor(customerId)) {
+	private void verifyCanOrderFor(@NotNull UUID customerId) {
+		if (!securityCheck.canOrderFor(customerId)) {
             throw new AccessDeniedException("Cannot order for customer " + customerId);
         }
-    }
+	}
 
     private ShippingCostService.CalculationResult calculateShippingCost(ShippingInput shipping) {
         ZipCode origin = originAddressService.originAddress().zipCode();

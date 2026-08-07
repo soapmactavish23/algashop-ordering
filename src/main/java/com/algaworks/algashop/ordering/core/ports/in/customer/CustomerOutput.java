@@ -11,9 +11,9 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CustomerOutput {
     private UUID id;
     private String firstName;

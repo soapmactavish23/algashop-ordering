@@ -11,28 +11,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class WithMockJwtSecurityContextFactory implements WithSecurityContextFactory<WithMockJwt> {
 
-    private final JwtAuthenticationConverter jwtAuthenticationConverter;
+	private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
-    public WithMockJwtSecurityContextFactory(JwtAuthenticationConverter jwtAuthenticationConverter) {
-        this.jwtAuthenticationConverter = jwtAuthenticationConverter;
-    }
+	public WithMockJwtSecurityContextFactory(JwtAuthenticationConverter jwtAuthenticationConverter) {
+		this.jwtAuthenticationConverter = jwtAuthenticationConverter;
+	}
 
-    @Override
-    public SecurityContext createSecurityContext(WithMockJwt annotation) {
-        Jwt jwt = MockJwtFactory.buildJwt(
-                "mock-value",
-                annotation.subject(),
-                MockJwtFactory.DEFAULT_ISSUER_URI,
-                annotation.scopes(),
-                annotation.role(),
-                annotation.audiences()
-        );
+	@Override
+	public SecurityContext createSecurityContext(WithMockJwt annotation) {
+		Jwt jwt = MockJwtFactory.buildJwt(
+				"mock-value",
+				annotation.subject(),
+				MockJwtFactory.DEFAULT_ISSUER_URI,
+				annotation.scopes(),
+				annotation.role(),
+				annotation.audiences()
+		);
 
-        AbstractAuthenticationToken authenticationToken = jwtAuthenticationConverter.convert(jwt);
+		AbstractAuthenticationToken authenticationToken = jwtAuthenticationConverter.convert(jwt);
 
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authenticationToken);
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(authenticationToken);
 
-        return context;
-    }
+		return context;
+	}
 }

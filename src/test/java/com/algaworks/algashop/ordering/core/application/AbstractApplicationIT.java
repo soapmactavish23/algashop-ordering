@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
-@WithMockJwt
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({TestcontainerPostgreSQLConfig.class, MockJwtDecoderConfig.class})
+@WithMockJwt
 public abstract class AbstractApplicationIT {
 
 }

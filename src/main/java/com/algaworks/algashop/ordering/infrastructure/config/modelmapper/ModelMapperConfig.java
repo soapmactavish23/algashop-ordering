@@ -52,7 +52,7 @@ public class ModelMapperConfig {
     private static final Converter<Long, String> longToStringTSIDConverter =
             mappingContext -> {
                 Long tsidAsLong = mappingContext.getSource();
-                if(tsidAsLong == null){
+                if (tsidAsLong == null) {
                     return null;
                 }
                 return new TSID(tsidAsLong).toString();
@@ -90,7 +90,12 @@ public class ModelMapperConfig {
         modelMapper.createTypeMap(OrderItemPersistenceEntity.class, OrderItemDetailOutput.class)
                 .addMappings(mapping ->
                         mapping.using(longToStringTSIDConverter)
+                                .map(OrderItemPersistenceEntity::getId, OrderItemDetailOutput::setId))
+                .addMappings(mapping ->
+                        mapping.using(longToStringTSIDConverter)
                                 .map(OrderItemPersistenceEntity::getOrderId, OrderItemDetailOutput::setOrderId));
+
+
     }
 
 }

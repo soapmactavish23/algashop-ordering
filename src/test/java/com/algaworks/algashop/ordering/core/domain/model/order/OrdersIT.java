@@ -134,7 +134,7 @@ class OrdersIT extends AbstractDomainIT {
         orders.add(
                 OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build()
         );
-
+        
         orders.add(
                 OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).build()
         );
@@ -205,4 +205,4 @@ class OrdersIT extends AbstractDomainIT {
         Assertions.assertThat(orders.salesQuantityByCustomerInYear(customerId, Year.now().minusYears(1))).isZero();
     }
 
-}
+ }

@@ -15,12 +15,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ShoppingCartItemInput {
 
-    @NotNull
-    @Positive
-    private Integer quantity;
+	@NotNull
+	@Positive
+	private Integer quantity;
 
-    @NotNull
-    private UUID productId;
-    //Alimentado via PathVariable
-    private UUID shoppingCartId;
+	@NotNull
+	private UUID productId;
+	//Alimentado via PathVariable
+	private UUID shoppingCartId;
 }

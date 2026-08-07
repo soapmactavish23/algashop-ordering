@@ -24,5 +24,4 @@ public enum OrderStatus {
     public boolean canNotChangeTo(OrderStatus newStatus) {
         return !canChangeTo(newStatus);
     }
-
 }

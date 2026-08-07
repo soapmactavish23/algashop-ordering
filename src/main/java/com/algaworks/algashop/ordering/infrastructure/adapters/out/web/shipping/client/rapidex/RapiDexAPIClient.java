@@ -7,5 +7,4 @@ public interface RapiDexAPIClient {
 
     @PostExchange("/api/delivery-cost")
     DeliveryCostResponse calculate(@RequestBody DeliveryCostRequest request);
-
 }

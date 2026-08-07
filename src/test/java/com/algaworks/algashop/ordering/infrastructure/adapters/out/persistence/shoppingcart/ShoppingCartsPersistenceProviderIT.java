@@ -75,7 +75,7 @@ class ShoppingCartsPersistenceProviderIT extends AbstractPersistenceIT {
         assertThat(persistenceProvider.exists(shoppingCart.id())).isFalse();
         assertThat(entityRepository.findById(shoppingCart.id().value())).isEmpty();
     }
-
+    
     @Test
     public void shouldRemoveShoppingCartByEntity() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
@@ -112,7 +112,7 @@ class ShoppingCartsPersistenceProviderIT extends AbstractPersistenceIT {
 
         ShoppingCart cart1 = ShoppingCartTestDataBuilder.aShoppingCart().customerId(customer.id()).build();
         persistenceProvider.add(cart1);
-
+        
         Customer otherCustomer = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
         customersPersistenceProvider.add(otherCustomer);
 
@@ -123,7 +123,7 @@ class ShoppingCartsPersistenceProviderIT extends AbstractPersistenceIT {
 
         assertThat(finalCount).isEqualTo(initialCount + 2);
     }
-
+    
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void shouldAddAndFindWhenNoTransaction() {

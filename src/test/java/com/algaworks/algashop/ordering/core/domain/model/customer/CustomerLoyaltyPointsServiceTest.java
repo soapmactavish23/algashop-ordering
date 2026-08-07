@@ -1,7 +1,6 @@
 package com.algaworks.algashop.ordering.core.domain.model.customer;
 
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.core.domain.model.order.CustomerLoyaltyPointsService;
 import com.algaworks.algashop.ordering.core.domain.model.order.Order;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderStatus;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderTestDataBuilder;

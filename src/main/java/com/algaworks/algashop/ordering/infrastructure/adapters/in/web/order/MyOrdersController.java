@@ -14,16 +14,14 @@ import com.algaworks.algashop.ordering.core.ports.out.order.OrderDetailOutput;
 import com.algaworks.algashop.ordering.core.ports.out.order.OrderSummaryOutput;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.PageModel;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.exceptionhandler.UnprocessableEntityException;
-import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations.CanReadMyOrders;
-import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations.CanWriteMyOrders;
-import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations.CanWriteOrders;
+import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/v1/customer/me/orders")
+@RequestMapping(path = "/api/v1/customers/me/orders")
 @RequiredArgsConstructor
 public class MyOrdersController {
 
@@ -33,20 +31,20 @@ public class MyOrdersController {
 
     private final SecurityChecks securityChecks;
 
-    @CanReadMyOrders
+    @SecurityAnnotations.CanReadMyOrders
     @GetMapping("/{orderId}")
     public OrderDetailOutput findById(@PathVariable String orderId) {
         return orderQueryService.findByIdAndCustomerId(orderId, securityChecks.getAuthenticatedUserId());
     }
 
-    @CanReadMyOrders
+    @SecurityAnnotations.CanReadMyOrders
     @GetMapping
     public PageModel<OrderSummaryOutput> filter(OrderFilter filter) {
         filter.setCustomerId(securityChecks.getAuthenticatedUserId());
         return PageModel.of(orderQueryService.filter(filter));
     }
 
-    @CanWriteOrders
+    @SecurityAnnotations.CanWriteMyOrders
     @PostMapping(consumes = "application/vnd.order-with-product.v1+json")
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDetailOutput createWithProduct(@Valid @RequestBody BuyNowInput input) {
@@ -60,7 +58,7 @@ public class MyOrdersController {
         return orderQueryService.findById(orderId);
     }
 
-    @CanWriteMyOrders
+    @SecurityAnnotations.CanWriteMyOrders
     @PostMapping(consumes = "application/vnd.order-with-shopping-cart.v1+json")
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDetailOutput createWithShoppingCart(@Valid @RequestBody CheckoutInput input) {

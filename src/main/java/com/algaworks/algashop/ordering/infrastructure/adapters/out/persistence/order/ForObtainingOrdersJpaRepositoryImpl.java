@@ -102,7 +102,7 @@ public class ForObtainingOrdersJpaRepositoryImpl implements ForObtainingOrders {
                                 customer.get("document"),
                                 customer.get("phone")
                         )
-                )
+                    )
         );
         Predicate[] predicates = toPredicates(builder, root, filter);
         Order sortOrder = toSortOrder(builder, root, filter);

@@ -7,6 +7,6 @@ import java.util.UUID;
 
 @Data
 public class ShoppingCartInput {
-    @NotNull
-    private UUID customerId;
+	@NotNull
+	private UUID customerId;
 }

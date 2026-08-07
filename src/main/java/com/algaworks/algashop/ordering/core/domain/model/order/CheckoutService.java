@@ -15,50 +15,50 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CheckoutService {
 
-    private final CustomerHaveFreeShippingSpecification haveFreeShippingSpecification;
+	private final CustomerHaveFreeShippingSpecification haveFreeShippingSpecification;
 
-    public Order checkout(Customer customer,
-                          ShoppingCart shoppingCart,
-                          Billing billing,
-                          Shipping shipping,
-                          PaymentMethod paymentMethod,
-                          CreditCardId creditCardId) {
+	public Order checkout(Customer customer,
+						  ShoppingCart shoppingCart,
+						  Billing billing,
+						  Shipping shipping,
+						  PaymentMethod paymentMethod,
+						  CreditCardId creditCardId) {
 
-        if (shoppingCart.isEmpty()) {
-            throw new ShoppingCartCantProceedToCheckoutException();
-        }
+		if (shoppingCart.isEmpty()) {
+			throw new ShoppingCartCantProceedToCheckoutException();
+		}
 
-        if (shoppingCart.containsUnavailableItems()) {
-            throw new ShoppingCartCantProceedToCheckoutException();
-        }
+		if (shoppingCart.containsUnavailableItems()) {
+			throw new ShoppingCartCantProceedToCheckoutException();
+		}
 
-        Set<ShoppingCartItem> items = shoppingCart.items();
+		Set<ShoppingCartItem> items = shoppingCart.items();
+		
+		Order order = Order.draft(shoppingCart.customerId());
+		order.changeBilling(billing);
 
-        Order order = Order.draft(shoppingCart.customerId());
-        order.changeBilling(billing);
+		if (haveFreeShipping(customer)) {
+			Shipping freeShipping = shipping.toBuilder().cost(Money.ZERO).build();
+			order.changeShipping(freeShipping);
+		} else {
+			order.changeShipping(shipping);
+		}
 
-        if (haveFreeShipping(customer)) {
-            Shipping freeShipping = shipping.toBuilder().cost(Money.ZERO).build();
-            order.changeShipping(freeShipping);
-        } else {
-            order.changeShipping(shipping);
-        }
+		order.changePaymentMethod(paymentMethod, creditCardId);
 
-        order.changePaymentMethod(paymentMethod, creditCardId);
+		for (ShoppingCartItem item : items) {
+			order.addItem(new Product(item.productId(), item.name(),
+				item.price(), item.isAvailable()), item.quantity());
+		}
 
-        for (ShoppingCartItem item : items) {
-            order.addItem(new Product(item.productId(), item.name(),
-                    item.price(), item.isAvailable()), item.quantity());
-        }
+		order.place();
+		shoppingCart.empty();
 
-        order.place();
-        shoppingCart.empty();
+		return order;
+	}
 
-        return order;
-    }
-
-    private boolean haveFreeShipping(Customer customer) {
-        return haveFreeShippingSpecification.isSatisfiedBy(customer);
-    }
+	private boolean haveFreeShipping(Customer customer) {
+		return haveFreeShippingSpecification.isSatisfiedBy(customer);
+	}
 
 }

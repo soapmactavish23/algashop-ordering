@@ -12,7 +12,6 @@ public record Product(
         Money price,
         Boolean inStock
 ) {
-
     public Product {
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
@@ -21,7 +20,7 @@ public record Product(
     }
 
     public void checkOutOfStock() {
-        if(isOutOfStock()) {
+        if (isOutOfStock()) {
             throw new ProductOutOfStockException(this.id());
         }
     }
@@ -29,5 +28,4 @@ public record Product(
     private boolean isOutOfStock() {
         return !inStock();
     }
-
 }

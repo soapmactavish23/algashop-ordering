@@ -120,4 +120,4 @@ class CustomersIT extends AbstractDomainIT {
         Assertions.assertThat(customers.isEmailUnique(new Email("alex@gmail.com"), new CustomerId())).isTrue();
     }
 
-}
+ }

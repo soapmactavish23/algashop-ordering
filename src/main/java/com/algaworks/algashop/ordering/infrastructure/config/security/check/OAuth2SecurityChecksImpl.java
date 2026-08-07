@@ -62,10 +62,9 @@ public class OAuth2SecurityChecksImpl implements SecurityChecks {
 
     @Override
     public boolean canOrderFor(UUID customerId) {
-        if(customerId == null) {
+        if (customerId == null) {
             return false;
         }
-
         return isCustomer() && getAuthenticatedUserId().equals(customerId);
     }
 
@@ -100,3 +99,4 @@ public class OAuth2SecurityChecksImpl implements SecurityChecks {
         return authentication;
     }
 }
+

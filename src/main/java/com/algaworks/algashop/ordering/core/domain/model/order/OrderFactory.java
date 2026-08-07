@@ -1,8 +1,8 @@
 package com.algaworks.algashop.ordering.core.domain.model.order;
 
-import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 
 import java.util.Objects;
 
@@ -12,14 +12,15 @@ public class OrderFactory {
 
     }
 
-    public static Order filled(CustomerId customerId,
-                               Shipping shipping,
-                               Billing billing,
-                               PaymentMethod paymentMethod,
-                               Product product,
-                               Quantity productQuantity,
-                               CreditCardId creditCardId) {
-
+    public static Order filled(
+            CustomerId customerId,
+            Shipping shipping,
+            Billing billing,
+            PaymentMethod paymentMethod,
+            Product product,
+            Quantity productQuantity,
+            CreditCardId creditCardId
+    ) {
         Objects.requireNonNull(customerId);
         Objects.requireNonNull(shipping);
         Objects.requireNonNull(billing);

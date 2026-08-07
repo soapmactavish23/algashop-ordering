@@ -62,4 +62,4 @@ public class ShoppingCartItemTestDataBuilder {
         this.available = available;
         return this;
     }
-}
+} 

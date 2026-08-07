@@ -1,7 +1,6 @@
 package com.algaworks.algashop.ordering.core.ports.in.checkout;
 
 import com.algaworks.algashop.ordering.core.ports.in.order.BillingData;
-import com.algaworks.algashop.ordering.core.ports.in.order.ShippingInput;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

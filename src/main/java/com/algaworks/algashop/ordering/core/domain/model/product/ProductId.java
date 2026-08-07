@@ -7,18 +7,16 @@ import java.util.UUID;
 
 public record ProductId(UUID value) {
 
-    public ProductId() {
-        this(IdGenerator.generateTimeBasedUUID());
+    public ProductId {
+        Objects.requireNonNull(value);
     }
 
-    public ProductId(UUID value) {
-        Objects.requireNonNull(value);
-        this.value = value;
+    public ProductId() {
+        this(IdGenerator.generateTimeBasedUUID());
     }
 
     @Override
     public String toString() {
         return value.toString();
     }
-
 }

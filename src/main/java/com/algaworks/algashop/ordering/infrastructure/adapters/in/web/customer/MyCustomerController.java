@@ -16,37 +16,39 @@ import static org.springframework.web.servlet.mvc.method.annotation.MvcUriCompon
 import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/customers/me")
+@RequiredArgsConstructor
 public class MyCustomerController {
 
-    private final ForManagingCustomers forManagingCustomers;
-    private final ForQueryingCustomers forQueryingCustomers;
-    private final SecurityChecks securityChecks;
+	private final ForManagingCustomers forManagingCustomers;
+	private final ForQueryingCustomers forQueryingCustomers;
+	private final SecurityChecks securityChecks;
 
-    @SecurityAnnotations.CanWriteCustomerProfile
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CustomerOutput create(@RequestBody @Valid CustomerInput input, HttpServletResponse httpServletResponse) {
-        UUID customerId = forManagingCustomers.create(securityChecks.getAuthenticatedUserId(), input);
+	@SecurityAnnotations.CanWriteMyCustomerProfile
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public CustomerOutput create(@RequestBody @Valid CustomerInput input,
+	                             HttpServletResponse httpServletResponse) {
+		UUID customerId = forManagingCustomers.create(securityChecks.getAuthenticatedUserId(), input);
 
-        UriComponentsBuilder builder = fromMethodCall(on(MyCustomerController.class).load());
-        httpServletResponse.addHeader("Location", builder.toUriString());
+		UriComponentsBuilder builder = fromMethodCall(on(MyCustomerController.class).load());
+		httpServletResponse.addHeader("Location", builder.toUriString());
 
-        return forQueryingCustomers.findById(customerId);
-    }
+		return forQueryingCustomers.findById(customerId);
+	}
 
-    @SecurityAnnotations.CanReadCustomerProfile
-    @GetMapping("/{customerId}")
-    public CustomerOutput load() {
-        return forQueryingCustomers.findById(securityChecks.getAuthenticatedUserId());
-    }
+	@SecurityAnnotations.CanReadMyCustomerProfile
+	@GetMapping
+	public CustomerOutput load() {
+		return forQueryingCustomers.findById(securityChecks.getAuthenticatedUserId());
+	}
 
-    @SecurityAnnotations.CanWriteCustomerProfile
-    @PutMapping
-    public CustomerOutput update(@RequestBody @Valid CustomerUpdateInput input) {
-        forManagingCustomers.update(securityChecks.getAuthenticatedUserId(), input);
-        return forQueryingCustomers.findById(securityChecks.getAuthenticatedUserId());
-    }
+
+	@SecurityAnnotations.CanWriteMyCustomerProfile
+	@PutMapping
+	public CustomerOutput update(@RequestBody @Valid CustomerUpdateInput input) {
+		forManagingCustomers.update(securityChecks.getAuthenticatedUserId(), input);
+		return forQueryingCustomers.findById(securityChecks.getAuthenticatedUserId());
+	}
 
 }

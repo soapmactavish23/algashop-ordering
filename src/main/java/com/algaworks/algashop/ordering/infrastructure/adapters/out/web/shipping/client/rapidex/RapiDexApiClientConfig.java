@@ -12,11 +12,12 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import java.time.Duration;
 
 @Configuration
-public class RapiDexApiClientConfig {
+public class RapiDexAPIClientConfig {
 
     @Bean
-    public RapiDexAPIClient rapiDexAPIClient(RestClient.Builder builder,
-                                             @Value("${algashop.integrations.rapidex.url}") String rapiDexUrl) {
+    public RapiDexAPIClient rapidexApiClient(
+            RestClient.Builder builder,
+            @Value("${algashop.integrations.rapidex.url}") String rapiDexUrl) {
         RestClient restClient = builder.baseUrl(rapiDexUrl)
                 .requestFactory(generateClientHttpRequestFactory())
                 .build();

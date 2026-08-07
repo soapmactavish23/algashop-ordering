@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface ForObtainingCustomers {
     CustomerOutput findById(UUID customerId);
-    Page<CustomerSummaryOutput> filter(CustomerFilter customerFilter);
+    Page<CustomerSummaryOutput> filter(CustomerFilter filter);
 }

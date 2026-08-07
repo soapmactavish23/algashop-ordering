@@ -19,7 +19,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private final ForManagingCustomers forManagingCustomers;
     private final ForQueryingCustomers forQueryingCustomers;
     private final ForQueryingShoppingCarts forQueryingShoppingCarts;
 

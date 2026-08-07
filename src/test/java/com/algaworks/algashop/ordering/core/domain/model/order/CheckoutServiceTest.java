@@ -7,9 +7,9 @@ import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerTestDa
 import com.algaworks.algashop.ordering.core.domain.model.customer.LoyaltyPoints;
 import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductTestDataBuilder;
-import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCart;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartCantProceedToCheckoutException;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartTestDataBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

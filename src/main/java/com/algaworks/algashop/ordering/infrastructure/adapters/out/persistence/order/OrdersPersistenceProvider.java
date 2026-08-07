@@ -1,10 +1,10 @@
 package com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order;
 
-import com.algaworks.algashop.ordering.core.domain.model.order.Order;
-import com.algaworks.algashop.ordering.core.domain.model.order.Orders;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.core.domain.model.order.Order;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
+import com.algaworks.algashop.ordering.core.domain.model.order.Orders;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -53,10 +53,10 @@ public class OrdersPersistenceProvider implements Orders {
         long orderId = aggregateRoot.id().value().toLong();
 
         persistenceRepository.findById(orderId)
-                .ifPresentOrElse(
-                        (persistenceEntity) -> update(aggregateRoot, persistenceEntity),
-                        ()-> insert(aggregateRoot)
-                );
+            .ifPresentOrElse(
+                (persistenceEntity) -> update(aggregateRoot, persistenceEntity),
+                ()-> insert(aggregateRoot)
+            );
     }
 
     @Override

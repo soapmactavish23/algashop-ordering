@@ -18,15 +18,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class CustomerInput {
-
     @NotBlank
     private String firstName;
 
     @NotBlank
     private String lastName;
 
-    @Email
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank
@@ -35,8 +34,8 @@ public class CustomerInput {
     @NotBlank
     private String document;
 
-    @Past
     @NotNull
+    @Past
     private LocalDate birthDate;
 
     @NotNull
@@ -45,5 +44,4 @@ public class CustomerInput {
     @NotNull
     @Valid
     private AddressData address;
-
 }

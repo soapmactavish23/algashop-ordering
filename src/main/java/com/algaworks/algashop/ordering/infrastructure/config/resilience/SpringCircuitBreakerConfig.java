@@ -24,18 +24,21 @@ public class SpringCircuitBreakerConfig {
                 .delay(Duration.ofSeconds(3))
                 .includes(GatewayTimeoutException.class, BadGatewayException.ServerErrorException.class)
                 .build();
+        
         return factory -> {
             factory.configure(builder -> builder
                     .retryPolicy(retryPolicy)
                     .openTimeout(Duration.ofSeconds(30))
                     .resetTimeout(Duration.ofSeconds(60))
-                    .build(), productCatalogCBId);
+                    .build(), productCatalogCBId
+            );
 
             factory.configure(builder -> builder
                     .retryPolicy(retryPolicy)
                     .openTimeout(Duration.ofSeconds(30))
                     .resetTimeout(Duration.ofSeconds(60))
-                    .build(), rapidexAPICBId);
+                    .build(), rapidexAPICBId
+            );
         };
     }
 
