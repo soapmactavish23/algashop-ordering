@@ -9,4 +9,3 @@ public interface SecurityChecks {
     boolean isCustomer();
     boolean canOrderFor(UUID customerId);
 }
-

@@ -24,7 +24,7 @@ public class SpringCircuitBreakerConfig {
                 .delay(Duration.ofSeconds(3))
                 .includes(GatewayTimeoutException.class, BadGatewayException.ServerErrorException.class)
                 .build();
-        
+
         return factory -> {
             factory.configure(builder -> builder
                     .retryPolicy(retryPolicy)
