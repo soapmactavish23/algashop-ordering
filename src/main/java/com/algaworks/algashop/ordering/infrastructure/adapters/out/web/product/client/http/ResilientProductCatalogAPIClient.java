@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientException;
 
 import java.net.SocketTimeoutException;
 import java.util.Optional;
@@ -70,12 +69,12 @@ public class ResilientProductCatalogAPIClient {
             return Optional.ofNullable(productCatalogAPIClient.getById(productId));
         } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
-        } catch (RestClientException e) {
+        } catch (Exception e) {
             throw translateException(e);
         }
     }
 
-    private RuntimeException translateException(RestClientException e) {
+    private RuntimeException translateException(Exception e) {
         if (e.getCause() instanceof SocketTimeoutException
             || e instanceof ResourceAccessException) {
             return new GatewayTimeoutException("Product Catalog API Timeout", e);
