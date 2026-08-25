@@ -16,23 +16,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerLoyaltyPointsApplicationService implements ForAddingLoyaltyPoints {
 
-    private final CustomerLoyaltyPointsService customerLoyaltyPointsService;
-    private final Orders orders;
-    private final Customers customers;
+	private final CustomerLoyaltyPointsService customerLoyaltyPointsService;
+	private final Orders orders;
+	private final Customers customers;
 
-    @Transactional
-    public void addLoyaltyPoints(UUID rawCustomerId, String rawOrderId) {
-        CustomerId customerId = new CustomerId(rawCustomerId);
-        OrderId orderId = new OrderId(rawOrderId);
+	@Transactional
+	public void addLoyaltyPoints(UUID rawCustomerId, String rawOrderId) {
+		CustomerId customerId = new CustomerId(rawCustomerId);
+		OrderId orderId = new OrderId(rawOrderId);
 
-        Order order = orders.ofId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException());
-        Customer customer = customers.ofId(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException());
-
-        customerLoyaltyPointsService.addPoints(customer, order);
-
-        customers.add(customer);
-    }
+		Order order = orders.ofId(orderId)
+				.orElseThrow(() -> new OrderNotFoundException());
+		Customer customer = customers.ofId(customerId)
+				.orElseThrow(() -> new CustomerNotFoundException());
+		
+		customerLoyaltyPointsService.addPoints(customer, order);
+		
+		customers.add(customer);
+	}
 
 }

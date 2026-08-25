@@ -10,16 +10,16 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientBuilderConfig {
 
-    @Bean
-    @Primary
-    public RestClient.Builder restClientBuilder(RestClientBuilderConfigurer configurer) {
-        return configurer.configure(RestClient.builder());
-    }
+	@Bean
+	@Primary
+	public RestClient.Builder restClientBuilder(RestClientBuilderConfigurer configurer) {
+		return configurer.configure(RestClient.builder());
+	}
 
-    @Bean
-    @LoadBalanced
-    public RestClient.Builder loadBalancedRestClientBuilder(RestClientBuilderConfigurer configurer) {
-        return configurer.configure(RestClient.builder());
-    }
+	@Bean
+	@LoadBalanced
+	public RestClient.Builder loadBalancedRestClientBuilder(RestClientBuilderConfigurer configurer) {
+		return configurer.configure(RestClient.builder());
+	}
 
 }

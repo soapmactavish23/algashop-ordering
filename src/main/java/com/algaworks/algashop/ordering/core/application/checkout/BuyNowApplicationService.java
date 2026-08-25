@@ -85,11 +85,11 @@ public class BuyNowApplicationService implements ForBuyingProduct {
         return order.id().toString();
     }
 
-    private void verifyCanOrderFor(@NotNull UUID customerId) {
-        if (!securityCheck.canOrderFor(customerId)) {
+	private void verifyCanOrderFor(@NotNull UUID customerId) {
+		if (!securityCheck.canOrderFor(customerId)) {
             throw new AccessDeniedException("Cannot order for customer " + customerId);
         }
-    }
+	}
 
     private ShippingCostService.CalculationResult calculateShippingCost(ShippingInput shipping) {
         ZipCode origin = originAddressService.originAddress().zipCode();

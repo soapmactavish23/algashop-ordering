@@ -32,8 +32,8 @@ public class SecurityAnnotations {
     @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @PreAuthorize("hasAuthority('SCOPE_customers:write') and hasRole('CUSTOMER')")
-    public @interface CanWriteMyCustomerProfile {
-    }
+	public @interface CanWriteMyCustomerProfile {
+	}
 
     @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
@@ -61,3 +61,4 @@ public class SecurityAnnotations {
     @PreAuthorize("hasAuthority('SCOPE_shopping-carts:write') and hasRole('CUSTOMER')")
     public @interface CanWriteMyShoppingCart {}
 }
+
