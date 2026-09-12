@@ -127,6 +127,11 @@ public class ShoppingCart
         this.recalculateTotals();
     }
 
+    public void changeItemAvailability(ProductId productId, boolean available) {
+        ShoppingCartItem shoppingCartItem = this.findItem(productId);
+        shoppingCartItem.changeAvailability(available);
+    }
+
     public boolean containsUnavailableItems() {
         return items.stream().anyMatch(i -> !i.isAvailable());
     }
