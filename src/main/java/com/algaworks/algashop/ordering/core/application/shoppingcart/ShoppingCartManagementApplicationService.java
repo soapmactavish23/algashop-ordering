@@ -11,6 +11,7 @@ import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.*;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForManagingShoppingCarts;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartItemInput;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartManagementApplicationService implements ForManagingShoppingCarts {
@@ -111,6 +113,7 @@ public class ShoppingCartManagementApplicationService implements ForManagingShop
 		}
 
 		affectedShoppingCarts.forEach(shoppingCart -> {
+			log.info("Updating ShoppingCart={}", shoppingCart.id().toString());
 			shoppingCart.changeItemPrice(domainProductId, new Money(price));
 			shoppingCarts.add(shoppingCart);
 		});
