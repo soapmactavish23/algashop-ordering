@@ -2,8 +2,8 @@ package com.algaworks.algashop.ordering.infrastructure.adapters.in.messaging.kaf
 
 import com.algaworks.algashop.ordering.core.application.product.event.ProductDelistedIntegrationEvent;
 import com.algaworks.algashop.ordering.core.application.product.event.ProductListedIntegrationEvent;
-import com.algaworks.algashop.ordering.core.application.product.event.ProductPriceChangedIntegrationEvent;
 import com.algaworks.algashop.ordering.core.application.product.event.ProductPriceChangedV2IntegrationEvent;
+import com.algaworks.algashop.ordering.core.domain.model.DomainException;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForManagingShoppingCarts;
 import com.algaworks.algashop.ordering.infrastructure.config.cache.ProductCacheManager;
 import jakarta.validation.Valid;
@@ -28,14 +28,15 @@ public class KafkaProductIntegrationEventListener {
     private final ForManagingShoppingCarts forManagingShoppingCarts;
     private final ProductCacheManager productCacheManager;
 
-    @Value("${slow:false}")
-    private Boolean slow;
+    @Value("${simulate:none}") // none | slow | technical
+    private String simulate;
 
     @KafkaHandler(isDefault = true)
     public void handle(@Payload Object event,
                        @Header(value = KafkaHeaders.RECEIVED_KEY) String messageKey,
                        @Header(value = KafkaHeaders.OFFSET) String messageOffset) {
         log.info("Event ignored: key={} offset={}", messageKey, messageOffset);
+        simulateProcessing();
     }
 
     @KafkaHandler
@@ -43,6 +44,7 @@ public class KafkaProductIntegrationEventListener {
                        @Header(value = KafkaHeaders.RECEIVED_KEY) String messageKey) {
         log.info("Received " + event.getClass());
         log.info("MessageKey " + messageKey);
+        simulateProcessing();
         productCacheManager.evict(event.getProductId());
         forManagingShoppingCarts.changeProductAvailability(event.getProductId(), true);
     }
@@ -52,6 +54,7 @@ public class KafkaProductIntegrationEventListener {
                        @Header(value = KafkaHeaders.RECEIVED_KEY) String messageKey) {
         log.info("Received " + event.getClass());
         log.info("MessageKey " + messageKey);
+        simulateProcessing();
         productCacheManager.evict(event.getProductId());
         forManagingShoppingCarts.changeProductAvailability(event.getProductId(), false);
     }
@@ -62,24 +65,28 @@ public class KafkaProductIntegrationEventListener {
         log.info("Received " + event.getClass());
         log.info("MessageKey " + messageKey);
 
-        simulateSlowProcessing();
+        simulateProcessing();
 
         productCacheManager.evict(event.getProductId());
         forManagingShoppingCarts.refreshProductPrice(event.getProductId(), event.getNewRegularPrice());
     }
 
-    public void simulateSlowProcessing() {
-        if(!Boolean.TRUE.equals(slow)) {
-            return;
+    public void simulateProcessing() {
+        switch(simulate) {
+            case "slow" -> {
+                log.warn("Simulate: Slow call");
+
+                try {
+                    Thread.sleep(Duration.ofSeconds(90));
+                } catch (Exception e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            case "technical" -> throw new RuntimeException("Simulated failure: database is down");
+            case "business" -> throw new DomainException("Simulated business: rule violation");
         }
 
-        log.warn("Slow call");
 
-        try {
-            Thread.sleep(Duration.ofSeconds(90));
-        } catch (Exception e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
 }
