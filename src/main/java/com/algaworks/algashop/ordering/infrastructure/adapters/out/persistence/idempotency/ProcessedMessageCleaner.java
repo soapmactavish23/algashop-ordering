@@ -10,9 +10,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ProcessedMessageCleaner {
 
     private static final int BATCH_SIZE = 200;
@@ -22,7 +22,7 @@ public class ProcessedMessageCleaner {
     private final ProcessedMessageRepository repository;
     private final TransactionTemplate transactionTemplate;
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "0 */10 * * * *") //each 10 minutes
     @SchedulerLock(name = "processedMessageCleanup", lockAtMostFor = "PT9M")
     public void purgeExpired() {
         OffsetDateTime threshold = OffsetDateTime.now().minus(RETENTION);
@@ -34,12 +34,12 @@ public class ProcessedMessageCleaner {
                     repository.deleteBatchOlderThan(threshold, BATCH_SIZE));
             totalDeleted += batchDeleted == null ? 0 : batchDeleted;
 
-            if(batchDeleted == null || batchDeleted < BATCH_SIZE) {
+            if (batchDeleted == null || batchDeleted < BATCH_SIZE) {
                 break;
             }
         }
 
-        log.info("Processed message cleanup finishedm deleted={}", totalDeleted);
+        log.info("Processed message cleaup finished, deleted={}", totalDeleted);
     }
 
 }
