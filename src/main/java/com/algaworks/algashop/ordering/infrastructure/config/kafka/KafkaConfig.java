@@ -58,4 +58,13 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic ordersEventsTopic(AlgaShopMessagingKafkaProperties properties) {
+        return TopicBuilder.name(properties.getOrderEventTopicName())
+                .partitions(3)
+                .replicas(3)
+                .configs(Map.of("min.insync.replicas", "2"))
+                .build();
+    }
+
 }
