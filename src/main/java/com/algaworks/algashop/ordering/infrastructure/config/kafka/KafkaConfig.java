@@ -48,14 +48,12 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic productEventsDlt(AlgaShopMessagingKafkaProperties properties) {
-        return TopicBuilder.name(DLT_PREFIX + properties.getProductEventTopicName())
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of(
-                        "min.insync.replicas", "2",
-                        "retention.ms", String.valueOf(Duration.ofDays(30).toMillis())
-                ))
-                .build();
+        return createDeadLetterTopic(properties.getProductEventTopicName());
+    }
+
+    @Bean
+    public NewTopic orderEventsDlt(AlgaShopMessagingKafkaProperties properties) {
+        return createDeadLetterTopic(properties.getOrderEventTopicName());
     }
 
     @Bean
@@ -64,6 +62,17 @@ public class KafkaConfig {
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas", "2"))
+                .build();
+    }
+
+    private NewTopic createDeadLetterTopic(String originalTopicName) {
+        return TopicBuilder.name(DLT_PREFIX + originalTopicName)
+                .partitions(3)
+                .replicas(3)
+                .configs(Map.of(
+                        "min.insync.replicas", "2",
+                        "retention.ms", String.valueOf(Duration.ofDays(30).toMillis())
+                ))
                 .build();
     }
 
