@@ -57,8 +57,22 @@ public class KafkaConfig {
     }
 
     @Bean
+    public NewTopic orderCommandsDlt(AlgaShopMessagingKafkaProperties properties) {
+        return createDeadLetterTopic(properties.getOrderCommandTopicName());
+    }
+
+    @Bean
     public NewTopic ordersEventsTopic(AlgaShopMessagingKafkaProperties properties) {
         return TopicBuilder.name(properties.getOrderEventTopicName())
+                .partitions(3)
+                .replicas(3)
+                .configs(Map.of("min.insync.replicas", "2"))
+                .build();
+    }
+
+    @Bean
+    public NewTopic ordersCommandsTopic(AlgaShopMessagingKafkaProperties properties) {
+        return TopicBuilder.name(properties.getOrderCommandTopicName())
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas", "2"))

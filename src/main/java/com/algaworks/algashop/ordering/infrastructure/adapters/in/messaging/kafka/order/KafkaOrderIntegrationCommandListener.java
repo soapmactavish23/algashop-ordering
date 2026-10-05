@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.adapters.in.messaging.kafka.order;
 
-import com.algaworks.algashop.ordering.core.application.order.event.CheckoutAcceptedIntegrationEvent;
+import com.algaworks.algashop.ordering.core.application.checkout.command.ProcessAcceptedCheckoutIntegrationCommand;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.ForProcessingCheckoutAccepted;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,16 +15,15 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-        id = "ordering.self-events",
-        groupId = "ordering.self-events",
+        id = "ordering.order-commands",
         topics = "#{algaShopMessagingKafkaProperties.orderEventTopicName}"
 )
-public class KafkaOrderIntegrationEventListener {
+public class KafkaOrderIntegrationCommandListener {
 
     private final ForProcessingCheckoutAccepted forProcessingCheckoutAccepted;
 
     @KafkaHandler
-    public void handle(@Payload CheckoutAcceptedIntegrationEvent integrationEvent,
+    public void handle(@Payload ProcessAcceptedCheckoutIntegrationCommand integrationEvent,
                        @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String messageKey,
                        @Header(value = KafkaHeaders.RECEIVED_PARTITION, required = false) Integer partition,
                        @Header(value = KafkaHeaders.OFFSET, required = false) Integer offset) {
@@ -33,8 +32,8 @@ public class KafkaOrderIntegrationEventListener {
     }
 
     @KafkaHandler(isDefault = true)
-    public void handle(Object integrationEvent) {
-        log.info("Order integration event ignored: {}", integrationEvent.getClass().getSimpleName());
+    public void handle(Object integrationCommand) {
+        log.info("Order integration command ignored: {}", integrationCommand.getClass().getSimpleName());
     }
 
 

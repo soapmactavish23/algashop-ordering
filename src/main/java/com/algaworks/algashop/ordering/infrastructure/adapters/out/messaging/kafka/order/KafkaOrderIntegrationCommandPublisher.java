@@ -1,7 +1,10 @@
-package com.algaworks.algashop.ordering.core.ports.out.messaging.kafka.order;
+package com.algaworks.algashop.ordering.infrastructure.adapters.out.messaging.kafka.order;
 
+import com.algaworks.algashop.ordering.core.application.CommandPublishingException;
 import com.algaworks.algashop.ordering.core.application.EventPublishingException;
+import com.algaworks.algashop.ordering.core.application.IntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.IntegrationEvent;
+import com.algaworks.algashop.ordering.core.ports.out.order.ForPublishingOrderIntegrationCommands;
 import com.algaworks.algashop.ordering.core.ports.out.order.ForPublishingOrderIntegrationEvents;
 import com.algaworks.algashop.ordering.infrastructure.config.kafka.AlgaShopMessagingKafkaProperties;
 import com.algaworks.algashop.ordering.infrastructure.config.utility.BeanValidationUtil;
@@ -18,41 +21,40 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class KafkaOrderIntegrationEventPublisher implements ForPublishingOrderIntegrationEvents {
+@Slf4j
+public class KafkaOrderIntegrationCommandPublisher implements ForPublishingOrderIntegrationCommands {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final AlgaShopMessagingKafkaProperties properties;
     private final BeanValidationUtil beanValidationUtil;
 
     @Override
-    public void send(IntegrationEvent event) {
-        beanValidationUtil.validate(event);
+    public void send(IntegrationCommand command) {
+        beanValidationUtil.validate(command);
         SendResult<String, Object> result = null;
         try {
             ProducerRecord<String, Object> record = new ProducerRecord<>(
-                    properties.getOrderEventTopicName(),
-                    event.getAggregateId(),
-                    event
-            );
+                    properties.getOrderCommandTopicName(),
+                    command.getAggregateId(),
+                    command);
 
-            result = kafkaTemplate.send(properties.getProductEventTopicName(), event.getAggregateId(), event)
-                    .get(40, TimeUnit.SECONDS);
+            result = kafkaTemplate.send(record).get(40, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new EventPublishingException("Interrupted while publishing", e);
+            throw new CommandPublishingException("Interrupted while publishing", command, e);
         } catch (TimeoutException | ExecutionException | KafkaException e) {
-            throw new EventPublishingException("Failed to publish", event, e);
+            throw new CommandPublishingException("Failed to publish", command, e);
         }
 
         RecordMetadata metadata = result.getRecordMetadata();
 
-        log.info("Published {} to {}-{} at offset {}",
-                event.getClass().getSimpleName(),
+        log.info("Publihed {} to {}-{} at offset {}",
+                command.getClass().getSimpleName(),
                 metadata.topic(),
                 metadata.partition(),
-                metadata.offset());
+                metadata.offset()
+        );
     }
 }
