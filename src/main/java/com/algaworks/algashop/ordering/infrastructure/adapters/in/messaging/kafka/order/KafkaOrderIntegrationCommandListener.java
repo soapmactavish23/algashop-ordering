@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.infrastructure.adapters.in.messaging.kaf
 
 import com.algaworks.algashop.ordering.core.application.checkout.command.ProcessAcceptedCheckoutIntegrationCommand;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.ForProcessingCheckoutAccepted;
+import com.algaworks.algashop.ordering.core.ports.out.idempotency.ForGuardingIdempotency;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -11,35 +12,50 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-@Slf4j
+import java.util.UUID;
+
 @Component
+@Slf4j
 @RequiredArgsConstructor
 @KafkaListener(
         id = "ordering.order-commands",
-        topics = "#{algaShopMessagingKafkaProperties.orderEventTopicName}"
+        topics = "#{algaShopMessagingKafkaProperties.orderCommandTopicName}"
 )
 public class KafkaOrderIntegrationCommandListener {
 
     private final ForProcessingCheckoutAccepted forProcessingCheckoutAccepted;
 
+    private final ForGuardingIdempotency forGuardingIdempotency;
+
     @KafkaHandler
-    public void handle(@Payload ProcessAcceptedCheckoutIntegrationCommand integrationEvent,
+    public void handle(@Payload ProcessAcceptedCheckoutIntegrationCommand integrationCommand,
                        @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String messageKey,
                        @Header(value = KafkaHeaders.RECEIVED_PARTITION, required = false) Integer partition,
-                       @Header(value = KafkaHeaders.OFFSET, required = false) Integer offset) {
-        logReceived(integrationEvent, messageKey, partition, offset);
-        forProcessingCheckoutAccepted.process(integrationEvent);
+                       @Header(value = KafkaHeaders.OFFSET, required = false) Integer offset,
+                       @Header(value = "idempotency-key") byte[] rawIdempotencyKey) {
+        logReceived(integrationCommand, messageKey, partition, offset);
+
+        UUID idempotencyKey = UUID.fromString(new String(rawIdempotencyKey));
+        forGuardingIdempotency.runOnce(idempotencyKey, ()-> forProcessingCheckoutAccepted.process(integrationCommand));
+
     }
 
     @KafkaHandler(isDefault = true)
-    public void handle(Object integrationCommand) {
-        log.info("Order integration command ignored: {}", integrationCommand.getClass().getSimpleName());
+    public void handle(@Payload Object integrationCommand,
+                       @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String messageKey,
+                       @Header(value = KafkaHeaders.RECEIVED_PARTITION, required = false) Integer partition,
+                       @Header(value = KafkaHeaders.OFFSET, required = false) Integer offset) {
+
+        log.warn("OrderIntegrationCommand Ignored | key={} | partiton={} | offset={} | thread={}",
+                messageKey, partition, offset, Thread.currentThread().getName());
+
+        throw new IllegalArgumentException("Unsupported order command");
     }
 
-
-    private void logReceived(Object event, String messageKey, Integer partition, Integer offset) {
+    private void logReceived(Object object, String messageKey, Integer partition, Integer offset) {
         log.info("Received {} | key={} | partiton={} | offset={} | thread={}",
-                event.getClass().getSimpleName(), messageKey, partition, offset,
+                object.getClass().getSimpleName(), messageKey, partition, offset,
                 Thread.currentThread().getName());
     }
+
 }

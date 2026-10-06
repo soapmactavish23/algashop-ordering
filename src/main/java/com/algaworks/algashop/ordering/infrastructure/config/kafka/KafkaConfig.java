@@ -30,6 +30,7 @@ public class KafkaConfig {
         DefaultErrorHandler defaultErrorHandler = new DefaultErrorHandler(recoverer, exponentialBackOff);
 
         defaultErrorHandler.addNotRetryableExceptions(DomainException.class);
+        defaultErrorHandler.addNotRetryableExceptions(IllegalArgumentException.class);
 
         return defaultErrorHandler;
     }

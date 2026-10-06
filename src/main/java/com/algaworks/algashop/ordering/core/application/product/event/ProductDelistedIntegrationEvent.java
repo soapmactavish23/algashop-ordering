@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.core.application.product.event;
 
 import com.algaworks.algashop.ordering.core.application.IntegrationEvent;
+import com.algaworks.algashop.ordering.core.domain.model.IdGenerator;
 import lombok.*;
 
 import java.time.OffsetDateTime;

@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProcessAcceptedCheckoutApplicationService implements ForProcessingCheckoutAccepted {
 
@@ -32,7 +32,7 @@ public class ProcessAcceptedCheckoutApplicationService implements ForProcessingC
     public void process(ProcessAcceptedCheckoutIntegrationCommand integrationCommand) {
         OrderId orderId = new OrderId(integrationCommand.getAggregateId());
 
-        if(orders.exists(orderId)) {
+        if (orders.exists(orderId)) {
             log.info("Checkout command ignored order {} already exists", orderId);
             return;
         }
@@ -56,4 +56,5 @@ public class ProcessAcceptedCheckoutApplicationService implements ForProcessingC
                 )
         );
     }
+
 }
