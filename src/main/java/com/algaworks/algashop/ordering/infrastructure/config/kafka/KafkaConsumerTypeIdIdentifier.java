@@ -15,6 +15,8 @@ import tools.jackson.databind.type.TypeFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.algaworks.algashop.ordering.infrastructure.config.kafka.KafkaConfig.TYPE_ID_HEADER;
+
 @Component
 @Slf4j
 public class KafkaConsumerTypeIdIdentifier {
@@ -40,7 +42,7 @@ public class KafkaConsumerTypeIdIdentifier {
             return genericJsonType;
         }
 
-        Header typeId = headers.lastHeader("__TypeId__");
+        Header typeId = headers.lastHeader(TYPE_ID_HEADER);
 
         if (typeId == null) {
             return genericJsonType;

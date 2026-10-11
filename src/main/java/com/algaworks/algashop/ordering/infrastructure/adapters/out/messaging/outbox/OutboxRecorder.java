@@ -12,13 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.algaworks.algashop.ordering.infrastructure.config.kafka.KafkaConfig.TYPE_ID_HEADER;
+
 @Component
 @ConditionalOnProperty(name = "algashop.messaging.outbox.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 public class OutboxRecorder {
-
-    static final String TYPE_ID_HEADER = "__TypeId__";
 
     private final OutboxMessageRepository repository;
     private final JacksonJsonSerializer<Object> outboxJsonSerializer;

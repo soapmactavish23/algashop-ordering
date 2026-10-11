@@ -22,6 +22,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.algaworks.algashop.ordering.infrastructure.config.kafka.KafkaConfig.IDEMPOTENCY_KEY_HEADER;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -43,7 +45,7 @@ public class KafkaOrderIntegrationCommandPublisher implements ForPublishingOrder
                     command);
 
             if (command.getIdempotencyKey() != null) {
-                record.headers().add("idempotency-key", command.getIdempotencyKey().toString().getBytes());
+                record.headers().add(IDEMPOTENCY_KEY_HEADER, command.getIdempotencyKey().toString().getBytes());
             }
 
             result = kafkaTemplate.send(record).get(40, TimeUnit.SECONDS);

@@ -22,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
 
+import static com.algaworks.algashop.ordering.infrastructure.config.kafka.KafkaConfig.IDEMPOTENCY_KEY_HEADER;
+
 @Component
 @Slf4j
 @KafkaListener(
@@ -75,7 +77,7 @@ public class KafkaProductIntegrationEventListener {
                        @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String messageKey,
                        @Header(value = KafkaHeaders.RECEIVED_PARTITION, required = false) Integer partition,
                        @Header(value = KafkaHeaders.OFFSET, required = false) Integer offset,
-                       @Header(value = "idempotency-key") byte[] rawIdempotencyKey) {
+                       @Header(value = IDEMPOTENCY_KEY_HEADER) byte[] rawIdempotencyKey) {
         logReceived(event, messageKey, partition, offset);
 
         UUID idempotencyKey = UUID.fromString(new String(rawIdempotencyKey, StandardCharsets.UTF_8));
