@@ -3,7 +3,6 @@ package com.algaworks.algashop.ordering.infrastructure.adapters.out.messaging.ou
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
@@ -13,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
 @ConditionalOnProperty(name = "algashop.messaging.outbox.enabled", havingValue = "true")
+@RequiredArgsConstructor
+@Slf4j
 public class OutboxRecorder {
 
     static final String TYPE_ID_HEADER = "__TypeId__";
@@ -40,13 +39,14 @@ public class OutboxRecorder {
 
         repository.save(outboxMessage);
 
-        log.info("Recorder {} on outbox: channel={} aggregateId={} id={}", message.getClass().getSimpleName(),
+        log.info("Recorder {} on outbox: channel={} aggregateId{} id={}", message.getClass().getSimpleName(),
                 channelName, aggregateId, outboxMessage.getId());
+
     }
 
     private String readEventType(RecordHeaders headers, Object message) {
         Header typeId = headers.lastHeader(TYPE_ID_HEADER);
-        if(typeId == null) {
+        if (typeId == null) {
             return message.getClass().getName();
         }
         return new String(typeId.value(), StandardCharsets.UTF_8);
