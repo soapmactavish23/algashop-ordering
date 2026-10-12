@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.OffsetDateTime;
@@ -27,9 +26,16 @@ public class OutboxDispatcher {
     @SchedulerLock(name = "outboxDispatcher", lockAtMostFor = "PT5M")
     @Scheduled(fixedDelayString = "${algashop.messaging.outbox.poll-interval}")
     public void dispatch() {
+        OffsetDateTime deadLine = OffsetDateTime.now().plus(properties.getBatchDeadLine());
+
         List<OutboxMessage> batch = repository.findBatch(PageRequest.of(0, properties.getBatchSize()));
 
         for (OutboxMessage message : batch) {
+            if(OffsetDateTime.now().isAfter(deadLine)) {
+                log.warn("Outbox batch deadline reached");
+                break;
+            }
+
             if(!isEligible(message)) {
                 continue;
             }
