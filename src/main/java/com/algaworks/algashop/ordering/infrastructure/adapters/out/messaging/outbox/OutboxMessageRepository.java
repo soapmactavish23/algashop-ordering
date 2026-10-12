@@ -11,4 +11,7 @@ public interface OutboxMessageRepository extends JpaRepository<OutboxMessage, UU
 
     @Query("select m from OutboxMessage m order by m.id") //uuidv7
     List<OutboxMessage> findBatch(Pageable pageable);
+
+    @Query("delete from OutboxMessage m where m.id = :id")
+    void deleteMessage(UUID id);
 }
