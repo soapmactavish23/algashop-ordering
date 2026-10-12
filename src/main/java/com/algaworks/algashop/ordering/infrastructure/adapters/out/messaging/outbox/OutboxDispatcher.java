@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -28,12 +30,18 @@ public class OutboxDispatcher {
     public void dispatch() {
         OffsetDateTime deadLine = OffsetDateTime.now().plus(properties.getBatchDeadLine());
 
+        Set<String> blockedAggregates = new HashSet<>();
+
         List<OutboxMessage> batch = repository.findBatch(PageRequest.of(0, properties.getBatchSize()));
 
         for (OutboxMessage message : batch) {
             if(OffsetDateTime.now().isAfter(deadLine)) {
                 log.warn("Outbox batch deadline reached");
                 break;
+            }
+
+            if(blockedAggregates.contains(message.getAggregateId())) {
+                continue;
             }
 
             if(!isEligible(message)) {
@@ -45,6 +53,7 @@ public class OutboxDispatcher {
                 transactionTemplate.executeWithoutResult(_ -> repository.deleteMessage(message.getId()));
             } catch (Exception e) {
                 transactionTemplate.executeWithoutResult(_ -> registerFailure(message, e));
+                blockedAggregates.add(message.getAggregateId());
             }
         }
     }

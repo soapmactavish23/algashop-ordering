@@ -32,6 +32,11 @@ public class OutboxKafkaSender {
     }
 
     public void send(OutboxMessage message) {
+        if(message.getEventType().equals("Ordering.OrderPaidIntegrationEvent")
+            && message.getAttempts() < 2) {
+            throw new OutboxSendException("Fake exception");
+        }
+
         ProducerRecord<String, byte[]> record = new ProducerRecord<>(
                 message.getChannelName(),
                 message.getAggregateId(),
