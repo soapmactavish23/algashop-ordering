@@ -28,7 +28,9 @@ public class OrderEventListener {
 
     @EventListener
     public void listen(OrderPaidEvent event) {
-
+        Order order = orders.ofId(event.orderId()).orElseThrow(OrderNotFoundException::new);
+        OrderPlacedIntegrationEvent integrationEvent = orderPlacedIntegrationEventAssembler.toIntegrationEvent(order);
+        forPublishingOrderIntegrationEvents.send(integrationEvent);
     }
 
     @EventListener
