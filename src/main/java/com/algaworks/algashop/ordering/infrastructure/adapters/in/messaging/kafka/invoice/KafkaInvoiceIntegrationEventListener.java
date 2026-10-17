@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 public class KafkaInvoiceIntegrationEventListener {
 
     private final ForManagingOrders forManagingOrders;
-  
-    @KafkaHandler  
+
+    @KafkaHandler
     public void handle(  
             @Payload @Valid InvoicePaidIntegrationEvent event,
             @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String messageKey,  
@@ -31,7 +31,7 @@ public class KafkaInvoiceIntegrationEventListener {
             @Header(value = KafkaHeaders.OFFSET, required = false) Long offset) {  
         logReceived(event, messageKey, partition, offset);
         forManagingOrders.markAsPaid(event.getOrderId());
-    }  
+    }
   
     @KafkaHandler(isDefault = true)  
     public void handle(  
