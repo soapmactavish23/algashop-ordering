@@ -25,43 +25,43 @@ import java.util.UUID;
 @NoArgsConstructor
 public class OrderPlacedIntegrationEvent implements IntegrationEvent {
 
-    @Builder.Default
-    @NotNull
-    private UUID idempotencyKey = IdGenerator.generateTimeBasedUUID();
+	@Builder.Default
+	@NotNull
+	private UUID idempotencyKey = IdGenerator.generateTimeBasedUUID();
 
-    @NotBlank
-    private String orderId;
+	@NotBlank
+	private String orderId;
 
-    @NotNull
-    private UUID customerId;
+	@NotNull
+	private UUID customerId;
 
-    @NotNull
-    private OffsetDateTime placedAt;
+	@NotNull
+	private OffsetDateTime placedAt;
 
-    @NotNull
-    @Positive
-    private BigDecimal totalAmount;
+	@NotNull
+	@Positive
+	private BigDecimal totalAmount;
 
-    @Builder.Default
-    @NotNull
-    @Size(min = 1)
-    @Valid
-    private List<OrderItemSnapshot> items = new ArrayList<>();
+	@Builder.Default
+	@NotNull
+	@Size(min = 1)
+	@Valid
+	private List<OrderItemSnapshot> items = new ArrayList<>();
 
-    @NotNull
-    @Valid
-    private PaymentSnapshot payment;
+	@NotNull
+	@Valid
+	private PaymentSnapshot payment;
 
-    @NotNull
-    @Valid
-    private ShippingSnapshot shipping;
+	@NotNull
+	@Valid
+	private ShippingSnapshot shipping;
 
-    @NotNull
-    @Valid
-    private BillingSnapshot billing;
+	@NotNull
+	@Valid
+	private BillingSnapshot billing;
 
-    @Override
-    public String getAggregateId() {
-        return orderId;
-    }
+	@Override
+	public String getAggregateId() {
+		return orderId;
+	}
 }

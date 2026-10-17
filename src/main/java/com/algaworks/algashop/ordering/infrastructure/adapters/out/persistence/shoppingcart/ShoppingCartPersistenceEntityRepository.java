@@ -64,5 +64,5 @@ public interface ShoppingCartPersistenceEntityRepository extends JpaRepository<S
 	@EntityGraph(attributePaths = "items")
 	Optional<ShoppingCartPersistenceEntity> findById(UUID id);
 
-    List<ShoppingCartPersistenceEntity> findAllByItems_productId(UUID productId);
+	List<ShoppingCartPersistenceEntity> findAllByItems_productId(UUID productId);
 }

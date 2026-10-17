@@ -1,8 +1,5 @@
 package com.algaworks.algashop.ordering.core.domain.model;
 
-import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

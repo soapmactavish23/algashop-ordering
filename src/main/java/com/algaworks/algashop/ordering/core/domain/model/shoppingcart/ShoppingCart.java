@@ -127,10 +127,12 @@ public class ShoppingCart
         this.recalculateTotals();
     }
 
+
     public void changeItemAvailability(ProductId productId, boolean available) {
         ShoppingCartItem shoppingCartItem = this.findItem(productId);
         shoppingCartItem.changeAvailability(available);
     }
+
 
     public void changeItemPrice(ProductId productId, Money price) {
         ShoppingCartItem shoppingCartItem = this.findItem(productId);
@@ -249,4 +251,5 @@ public class ShoppingCart
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

@@ -15,32 +15,32 @@ import java.time.Duration;
 @ConfigurationProperties("algashop.messaging.outbox")
 public class OutboxProperties {
 
-    @NotNull
-    private boolean enabled = false;
+	@NotNull
+	private boolean enabled = false;
 
-    @NotNull
-    private Dispatcher dispatcher = new Dispatcher();
+	@NotNull
+	private Dispatcher dispatcher = new Dispatcher();
 
-    @NotNull
-    private Duration sendTimeout;
+	@NotNull
+	private Duration sendTimeout;
 
-    @Min(1)
-    private int batchSize;
+	@Min(1)
+	private int batchSize;
 
-    @NotNull
-    private Duration pollInterval;
+	@NotNull
+	private Duration pollInterval;
 
-    @Min(1)
-    private int maxAttempts;
+	@Min(1)
+	private int maxAttempts;
 
-    @NotNull
-    private Duration backoff;
+	@NotNull
+	private Duration backoff;
 
-    @NotNull
-    private Duration batchDeadLine;
+	@NotNull
+	private Duration batchDeadLine;
 
-    @Data
-    public static class Dispatcher {
-        private boolean enabled = false;
-    }
+	@Data
+	public static class Dispatcher {
+		private boolean enabled = false;
+	}
 }

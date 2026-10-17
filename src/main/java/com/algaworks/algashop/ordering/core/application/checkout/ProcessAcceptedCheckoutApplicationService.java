@@ -23,35 +23,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProcessAcceptedCheckoutApplicationService implements ForProcessingCheckoutAccepted {
 
-    private final Orders orders;
-    private final ShoppingCarts shoppingCarts;
-    private final OrderSnapshotAssembler orderSnapshotAssembler;
-    private final ForPublishingOrderIntegrationEvents forPublishingOrderIntegrationEvents;
+	private final Orders orders;
+	private final ShoppingCarts shoppingCarts;
+	private final OrderSnapshotAssembler orderSnapshotAssembler;
+	private final ForPublishingOrderIntegrationEvents forPublishingOrderIntegrationEvents;
 
-    private final OrderPlacedIntegrationEventAssembler orderPlacedIntegrationEventAssembler;
+	private final OrderPlacedIntegrationEventAssembler orderPlacedIntegrationEventAssembler;
 
-    @Override
-    @Transactional
-    public void process(ProcessAcceptedCheckoutIntegrationCommand integrationCommand) {
-        OrderId orderId = new OrderId(integrationCommand.getAggregateId());
+	@Override
+	@Transactional
+	public void process(ProcessAcceptedCheckoutIntegrationCommand integrationCommand) {
+		OrderId orderId = new OrderId(integrationCommand.getAggregateId());
 
-        if (orders.exists(orderId)) {
-            log.info("Checkout command ignored order {} already exists", orderId);
-            return;
-        }
+		if (orders.exists(orderId)) {
+			log.info("Checkout command ignored order {} already exists", orderId);
+			return;
+		}
 
-        Order order = orderSnapshotAssembler.toDomain(integrationCommand.getOrder());
-        orders.add(order);
+		Order order = orderSnapshotAssembler.toDomain(integrationCommand.getOrder());
+		orders.add(order);
 
-        UUID rawShoppingCartId = integrationCommand.getOrder().shoppingCartId();
-        if(rawShoppingCartId != null) {
-            shoppingCarts.ofId(new ShoppingCartId(rawShoppingCartId)).ifPresent(shoppingCart -> {
-                shoppingCart.empty();
-                shoppingCarts.add(shoppingCart);
-            });
-        }
+		UUID rawShoppingCartId = integrationCommand.getOrder().shoppingCartId();
+		if(rawShoppingCartId != null) {
+			shoppingCarts.ofId(new ShoppingCartId(rawShoppingCartId)).ifPresent(shoppingCart -> {
+				shoppingCart.empty();
+				shoppingCarts.add(shoppingCart);
+			});
+		}
 
-        forPublishingOrderIntegrationEvents.send(orderPlacedIntegrationEventAssembler.toIntegrationEvent(order));
-    }
+		forPublishingOrderIntegrationEvents.send(
+				orderPlacedIntegrationEventAssembler.toIntegrationEvent(order)
+		);
+	}
 
 }

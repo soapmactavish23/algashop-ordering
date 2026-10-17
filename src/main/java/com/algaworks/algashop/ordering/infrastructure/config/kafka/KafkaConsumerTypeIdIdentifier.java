@@ -15,67 +15,65 @@ import tools.jackson.databind.type.TypeFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.algaworks.algashop.ordering.infrastructure.config.kafka.KafkaConfig.TYPE_ID_HEADER;
-
 @Component
 @Slf4j
 public class KafkaConsumerTypeIdIdentifier {
 
-    private final JavaType genericJsonType = TypeFactory.createDefaultInstance().constructType(ObjectNode.class);
-    private Map<String, JavaType> javaTypeMap = new HashMap<>();
+	private final JavaType genericJsonType = TypeFactory.createDefaultInstance().constructType(ObjectNode.class);
+	private Map<String, JavaType> javaTypeMap = new HashMap<>();
 
-    private static KafkaConsumerTypeIdIdentifier instance;
+	private static KafkaConsumerTypeIdIdentifier instance;
 
-    public KafkaConsumerTypeIdIdentifier(
-            @Value("${spring.kafka.properties.spring.json.type.mapping}")
-            String typeMappings) {
-        javaTypeMap = createMappings(typeMappings);
-        instance = this;
-    }
+	public KafkaConsumerTypeIdIdentifier(
+			@Value("${spring.kafka.properties.spring.json.type.mapping:}")
+			String typeMappings) {
+		javaTypeMap = createMappings(typeMappings);
+		instance = this;
+	}
 
-    public static JavaType readType(byte[] data, Headers headers) {
-        return instance.readTypeByHeader(headers);
-    }
+	public static JavaType readType(byte[] data, Headers headers) {
+		return instance.readTypeByHeader(headers);
+	}
 
-    public JavaType readTypeByHeader(Headers headers) {
-        if (headers == null) {
-            return genericJsonType;
-        }
+	public JavaType readTypeByHeader(Headers headers) {
+		if (headers == null) {
+			return genericJsonType;
+		}
 
-        Header typeId = headers.lastHeader(TYPE_ID_HEADER);
+		Header typeId = headers.lastHeader("__TypeId__");
 
-        if (typeId == null) {
-            return genericJsonType;
-        }
+		if (typeId == null) {
+			return genericJsonType;
+		}
 
-        String typeIdString = new String(typeId.value());
+		String typeIdString = new String(typeId.value());
 
-        JavaType javaType = javaTypeMap.get(typeIdString);
+		JavaType javaType = javaTypeMap.get(typeIdString);
 
-        if (javaType == null) {
-            log.warn(String.format("No class found for __TypeId__=%s, applying generic.", typeIdString));
-            return genericJsonType;
-        }
+		if (javaType == null) {
+			log.warn(String.format("No class found for __TypeId__=%s, applying generic.", typeIdString));
+			return genericJsonType;
+		}
 
-        return javaType;
-    }
+		return javaType;
+	}
 
-    protected Map<String, JavaType> createMappings(String mappings) {
-        Map<String, JavaType> mappingsMap = new HashMap<>();
-        String[] array = StringUtils.commaDelimitedListToStringArray(mappings);
-        for (String entry : array) {
-            String[] split = entry.split(":");
-            Assert.isTrue(split.length == 2, "Each comma-delimited mapping entry must have exactly one ':'");
-            try {
-                String typeId = split[0].trim();
-                Class<?> javaClass = ClassUtils.forName(split[1].trim(), ClassUtils.getDefaultClassLoader());
-                JavaType javaType = TypeFactory.createDefaultInstance().constructType(javaClass);
-                mappingsMap.put(typeId, javaType);
-            } catch (ClassNotFoundException | LinkageError e) {
-                throw new IllegalArgumentException("Failed to load: " + split[1] + " for " + split[0], e);
-            }
-        }
-        return mappingsMap;
-    }
+	protected Map<String, JavaType> createMappings(String mappings) {
+		Map<String, JavaType> mappingsMap = new HashMap<>();
+		String[] array = StringUtils.commaDelimitedListToStringArray(mappings);
+		for (String entry : array) {
+			String[] split = entry.split(":");
+			Assert.isTrue(split.length == 2, "Each comma-delimited mapping entry must have exactly one ':'");
+			try {
+				String typeId = split[0].trim();
+				Class<?> javaClass = ClassUtils.forName(split[1].trim(), ClassUtils.getDefaultClassLoader());
+				JavaType javaType = TypeFactory.createDefaultInstance().constructType(javaClass);
+				mappingsMap.put(typeId, javaType);
+			} catch (ClassNotFoundException | LinkageError e) {
+				throw new IllegalArgumentException("Failed to load: " + split[1] + " for " + split[0], e);
+			}
+		}
+		return mappingsMap;
+	}
 
 }

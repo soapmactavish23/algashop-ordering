@@ -8,12 +8,12 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record OrderItemSnapshot(
-        @NotBlank String id,
-        @NotBlank String orderItemId,
-        @NotNull UUID productId,
-        @NotBlank String productName,
-        @NotNull @Positive BigDecimal price,
-        @NotNull @Positive Integer quantity,
-        @NotNull @Positive BigDecimal totalAmount
+		@NotBlank String id,
+		@NotBlank String orderItemId,
+		@NotNull UUID productId,
+		@NotBlank String productName,
+		@NotNull @Positive BigDecimal price,
+		@NotNull @Positive Integer quantity,
+		@NotNull @Positive BigDecimal totalAmount
 ) {
 }

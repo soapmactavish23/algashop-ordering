@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface ShoppingCarts extends RemoveCapableRepository<ShoppingCart, ShoppingCartId> {
 	Optional<ShoppingCart> ofCustomer(CustomerId customerId);
-
-    List<ShoppingCart> findAllContainingItem(ProductId productId);
+	List<ShoppingCart> findAllContainingItem(ProductId productId);
 }

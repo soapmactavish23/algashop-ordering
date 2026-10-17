@@ -20,4 +20,4 @@ public record OrderSnapshot(
         Integer totalItems,
         Set<OrderItemSnapshot> items,
         UUID shoppingCartId
-) {}
+){}

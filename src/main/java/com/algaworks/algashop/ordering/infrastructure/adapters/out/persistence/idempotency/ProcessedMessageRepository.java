@@ -10,17 +10,16 @@ import java.util.UUID;
 
 public interface ProcessedMessageRepository extends JpaRepository<ProcessedMessage, UUID> {
 
-    @Modifying
-    @Query(value = """
+	@Modifying
+	@Query(value = """
 			delete from processed_message
-			 where idempotency_key in (
-				   select idempotency_key
-					 from processed_message
-					where processed_at < :threshold
-					order by processed_at
-					limit :batchSize
-			 )
-			""", nativeQuery = true)
-    Integer deleteBatchOlderThan(@Param("threshold") OffsetDateTime threshold,
-                             @Param("batchSize") int batchSize);
+			where idempotency_key in (
+			   select idempotency_key
+			     from processed_message
+			    where processed_at < :threshold
+			    order by processed_at
+			    limit :batchSize )
+		""", nativeQuery = true)
+	Integer deleteBatchOlderThan(@Param("threshold") OffsetDateTime threshold,
+	                         @Param("batchSize") int batchSize);
 }

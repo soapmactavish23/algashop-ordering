@@ -16,27 +16,21 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductPriceChangedV2IntegrationEvent implements IntegrationEvent {
+	@NotNull
+	private UUID productId;
+	@NotNull
+	private OffsetDateTime changedAt;
+	@NotNull
+	private BigDecimal oldRegularPrice;
+	@NotNull
+	private BigDecimal oldSalePrice;
+	@NotNull
+	private BigDecimal newRegularPrice;
+	@NotNull
+	private BigDecimal newSalePrice;
 
-    @NotNull
-    private UUID productId;
-
-    @NotNull
-    private OffsetDateTime changedAt;
-
-    @NotNull
-    private BigDecimal oldRegularPrice;
-
-    @NotNull
-    private BigDecimal oldSalePrice;
-
-    @NotNull
-    private BigDecimal newRegularPrice;
-
-    @NotNull
-    private BigDecimal newSalePrice;
-
-    @Override
-    public String getAggregateId() {
-        return productId.toString();
-    }
+	@Override
+	public String getAggregateId() {
+		return productId.toString();
+	}
 }

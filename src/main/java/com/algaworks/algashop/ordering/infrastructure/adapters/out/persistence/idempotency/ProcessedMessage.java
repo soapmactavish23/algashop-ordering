@@ -9,23 +9,24 @@ import org.springframework.data.domain.Persistable;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "processed_message")
+@NoArgsConstructor
 public class ProcessedMessage implements Persistable<UUID> {
 
-    @Id
-    private UUID idempotencyKey;
+	@Id
+	private UUID idempotencyKey;
 
-    public ProcessedMessage(UUID idempotencyKey) {
-        this.idempotencyKey = idempotencyKey;
-    }
+	public ProcessedMessage(UUID idempotencyKey) {
+		this.idempotencyKey = idempotencyKey;
+	}
 
-    public UUID getId() {
-        return idempotencyKey;
-    }
+	@Override
+	public UUID getId() {
+		return idempotencyKey;
+	}
 
-    @Override
-    public boolean isNew() {
-        return true;
-    }
+	@Override
+	public boolean isNew() {
+		return true; // essa tabela só insere, nunca atualiza
+	}
 }

@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShoppingCartManagementApplicationService implements ForManagingShoppingCarts {
 
 	private final ShoppingCarts shoppingCarts;
@@ -93,7 +93,7 @@ public class ShoppingCartManagementApplicationService implements ForManagingShop
 	public void changeProductAvailability(UUID productId, boolean available) {
 		List<ShoppingCart> affectedShoppingCarts = shoppingCarts.findAllContainingItem(new ProductId(productId));
 
-		if(affectedShoppingCarts.isEmpty()) {
+		if (affectedShoppingCarts.isEmpty()) {
 			return;
 		}
 
@@ -108,12 +108,12 @@ public class ShoppingCartManagementApplicationService implements ForManagingShop
 		ProductId domainProductId = new ProductId(productId);
 		List<ShoppingCart> affectedShoppingCarts = shoppingCarts.findAllContainingItem(domainProductId);
 
-		if(affectedShoppingCarts.isEmpty()) {
+		if (affectedShoppingCarts.isEmpty()) {
 			return;
 		}
 
 		affectedShoppingCarts.forEach(shoppingCart -> {
-			log.info("Updating ShoppingCart={}", shoppingCart.id().toString());
+			log.info("Updating ShoppingCart={} ", shoppingCart.id().toString());
 			shoppingCart.changeItemPrice(domainProductId, new Money(price));
 			shoppingCarts.add(shoppingCart);
 		});

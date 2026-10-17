@@ -14,14 +14,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class BeanValidationUtil {
 
-    private final LocalValidatorFactoryBean factoryBean;
+	private final LocalValidatorFactoryBean factoryBean;
 
-    public void validate(Object object) {
-        Validator validator = factoryBean.getValidator();
-        Set<ConstraintViolation<Object>> validations = validator.validate(object);
-        if(!validations.isEmpty()) {
-            throw new ValidationException(new ConstraintViolationException(validations));
-        }
-    }
+	public void validate(Object object) {
+		Validator validator = factoryBean.getValidator();
+		Set<ConstraintViolation<Object>> violations = validator.validate(object);
+		if (!violations.isEmpty()) {
+			throw new ValidationException(new ConstraintViolationException(violations));
+		}
+	}
 
 }

@@ -10,5 +10,5 @@ public interface ForManagingShoppingCarts {
     void empty(UUID rawShoppingCartId);
     void delete(UUID rawShoppingCartId);
     void changeProductAvailability(UUID productId, boolean available);
-    void refreshProductPrice(UUID productId, BigDecimal newSalePrice);
+    void refreshProductPrice(UUID productId, BigDecimal salePrice);
 }

@@ -13,21 +13,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessAcceptedCheckoutIntegrationCommand
-        implements IntegrationCommand {
-    private UUID idempotencyKey = IdGenerator.generateTimeBasedUUID();
-    private OrderSnapshot order;
+		implements IntegrationCommand {
+	private UUID idempotencyKey = IdGenerator.generateTimeBasedUUID();
+	private OrderSnapshot order;
 
-    public ProcessAcceptedCheckoutIntegrationCommand(OrderSnapshot order) {
-        this.order = order;
-    }
+	public ProcessAcceptedCheckoutIntegrationCommand(OrderSnapshot order) {
+		this.order = order;
+	}
 
-    @Override
-    public String getAggregateId() {
-        return order.orderId();
-    }
+	@Override
+	public String getAggregateId() {
+		return order.orderId();
+	}
 
-    @Override
-    public UUID getIdempotencyKey() {
-        return idempotencyKey;
-    }
+	@Override
+	public UUID getIdempotencyKey() {
+		return idempotencyKey;
+	}
 }

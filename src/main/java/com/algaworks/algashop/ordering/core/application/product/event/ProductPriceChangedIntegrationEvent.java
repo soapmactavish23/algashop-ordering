@@ -14,12 +14,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductPriceChangedIntegrationEvent implements IntegrationEvent {
+	private UUID productId;
+	private OffsetDateTime changedAt;
 
-    private UUID productId;
-    private OffsetDateTime changedAt;
-
-    @Override
-    public String getAggregateId() {
-        return productId.toString();
-    }
+	@Override
+	public String getAggregateId() {
+		return productId.toString();
+	}
 }

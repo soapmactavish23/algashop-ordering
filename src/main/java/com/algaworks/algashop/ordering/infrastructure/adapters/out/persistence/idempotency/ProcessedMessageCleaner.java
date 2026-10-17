@@ -15,31 +15,31 @@ import java.time.OffsetDateTime;
 @Slf4j
 public class ProcessedMessageCleaner {
 
-    private static final int BATCH_SIZE = 200;
-    private static final int MAX_BATCHES = 20;
-    private static final Duration RETENTION = Duration.ofDays(10);
+	private static final int BATCH_SIZE = 200;
+	private static final int MAX_BATCHES = 20;
+	private static final Duration RETENTION = Duration.ofDays(10);
 
-    private final ProcessedMessageRepository repository;
-    private final TransactionTemplate transactionTemplate;
+	private final ProcessedMessageRepository repository;
+	private final TransactionTemplate transactionTemplate;
 
-    @Scheduled(cron = "0 */10 * * * *") //each 10 minutes
-    @SchedulerLock(name = "processedMessageCleanup", lockAtMostFor = "PT9M")
-    public void purgeExpired() {
-        OffsetDateTime threshold = OffsetDateTime.now().minus(RETENTION);
-        log.info("Processed message cleanup started, threshold={}", threshold);
+	@Scheduled(cron = "0 */10 * * * *") //each 10 minutes
+	@SchedulerLock(name = "processedMessageCleanup", lockAtMostFor = "PT9M")
+	public void purgeExpired() {
+		OffsetDateTime threshold = OffsetDateTime.now().minus(RETENTION);
+		log.info("Processed message cleanup started, threshold={}", threshold);
 
-        int totalDeleted = 0;
-        for (int i = 0; i < MAX_BATCHES; i++) {
-            Integer batchDeleted = transactionTemplate.execute(_ ->
-                    repository.deleteBatchOlderThan(threshold, BATCH_SIZE));
-            totalDeleted += batchDeleted == null ? 0 : batchDeleted;
+		int totalDeleted = 0;
+		for (int i = 0; i < MAX_BATCHES; i++) {
+			Integer batchDeleted = transactionTemplate.execute(_ ->
+					repository.deleteBatchOlderThan(threshold, BATCH_SIZE));
+			totalDeleted += batchDeleted == null ? 0 : batchDeleted;
 
-            if (batchDeleted == null || batchDeleted < BATCH_SIZE) {
-                break;
-            }
-        }
+			if (batchDeleted == null || batchDeleted < BATCH_SIZE) {
+				break;
+			}
+		}
 
-        log.info("Processed message cleaup finished, deleted={}", totalDeleted);
-    }
+		log.info("Processed message cleaup finished, deleted={}", totalDeleted);
+	}
 
 }

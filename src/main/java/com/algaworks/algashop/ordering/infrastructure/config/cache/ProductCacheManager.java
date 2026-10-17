@@ -11,13 +11,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductCacheManager {
 
-    public static final String PRODUCT_CATALOG_API_CACHE_NAME = "algashop:product-catalog-api:v1";
+	public static final String PRODUCT_CATALOG_API_CACHE_NAME = "algashop:product-catalog-api:v1";
 
-    private final CacheManager cacheManager;
+	private final CacheManager cacheManager;
 
-    public void evict(UUID productId) {
-        Optional.ofNullable(cacheManager.getCache(PRODUCT_CATALOG_API_CACHE_NAME))
-                .ifPresent(cache -> cache.evictIfPresent(productId));
-    }
+	public void evict(UUID productId) {
+		Optional.ofNullable(cacheManager.getCache(PRODUCT_CATALOG_API_CACHE_NAME))
+				.ifPresent(cache -> cache.evictIfPresent(productId));
+	}
 
 }

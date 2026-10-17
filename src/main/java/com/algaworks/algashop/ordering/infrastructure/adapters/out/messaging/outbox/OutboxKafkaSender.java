@@ -17,54 +17,47 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@Slf4j
 @Component
 @ConditionalOnProperty(name = "algashop.messaging.outbox.dispatcher.enabled", havingValue = "true")
+@Slf4j
 public class OutboxKafkaSender {
 
-    private final KafkaTemplate<String, byte[]> kafkaTemplate;
-    private final OutboxProperties outboxProperties;
+	private final KafkaTemplate<String, byte[]> kafkaTemplate;
+	private final OutboxProperties outboxProperties;
 
-    public OutboxKafkaSender(@Qualifier("outboxKafkaTemplate") KafkaTemplate<String, byte[]> kafkaTemplate,
-                             OutboxProperties outboxProperties) {
-        this.kafkaTemplate = kafkaTemplate;
-        this.outboxProperties = outboxProperties;
-    }
+	public OutboxKafkaSender(@Qualifier("outboxKafkaTemplate") KafkaTemplate<String, byte[]> kafkaTemplate,
+	                         OutboxProperties outboxProperties) {
+		this.kafkaTemplate = kafkaTemplate;
+		this.outboxProperties = outboxProperties;
+	}
 
-    public void send(OutboxMessage message) {
-        if(message.getEventType().equals("Ordering.OrderPaidIntegrationEvent")
-            && message.getAttempts() < 2) {
-            throw new OutboxSendException("Fake exception");
-        }
+	public void send(OutboxMessage message) {
+		ProducerRecord<String, byte[]> record = new ProducerRecord<>(
+				message.getChannelName(),
+				message.getAggregateId(),
+				message.getPayload().getBytes(StandardCharsets.UTF_8)
+		);
 
-        ProducerRecord<String, byte[]> record = new ProducerRecord<>(
-                message.getChannelName(),
-                message.getAggregateId(),
-                message.getPayload().getBytes(StandardCharsets.UTF_8)
-        );
+		record.headers().add(KafkaConfig.TYPE_ID_HEADER, message.getEventType().getBytes(StandardCharsets.UTF_8));
+		record.headers().add(KafkaConfig.IDEMPOTENCY_KEY_HEADER, message.getId().toString().getBytes(StandardCharsets.UTF_8));
 
-        record.headers().add(KafkaConfig.TYPE_ID_HEADER, message.getEventType().getBytes(StandardCharsets.UTF_8));
-        record.headers().add(KafkaConfig.IDEMPOTENCY_KEY_HEADER, message.getId()
-                .toString().getBytes(StandardCharsets.UTF_8));
+		SendResult<String, byte[]> result = doSend(record);
 
-        SendResult<String, byte[]> result = doSend(record);
+		RecordMetadata metadata = result.getRecordMetadata();
+		log.info("Published {} from outbox to {}-{} at offset {} | messageId={} aggregateId={}",
+				message.getEventType(), metadata.topic(), metadata.partition(),
+				metadata.offset(), message.getId(), message.getAggregateId());
 
-        RecordMetadata metadata = result.getRecordMetadata();
-        log.info("Published {} from outbox to {}-{} at offset {} | messageId={} aggregateId={}",
-                message.getEventType(), metadata.topic(), metadata.partition(),
-                metadata.offset(), message.getId(), message.getAggregateId());
+	}
 
-    }
-
-    private SendResult<String, byte[]> doSend(ProducerRecord<String, byte[]> record) {
-        try {
-            return kafkaTemplate.send(record).get(outboxProperties.getSendTimeout().toMillis(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new OutboxSendException("Interrupted while publishing", e);
-        } catch (ExecutionException | TimeoutException | KafkaException e) {
-            throw new OutboxSendException("Fail to publish", e);
-        }
-    }
-
+	private SendResult<String, byte[]> doSend(ProducerRecord<String, byte[]> record) {
+		try {
+			return kafkaTemplate.send(record).get(outboxProperties.getSendTimeout().toMillis(), TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new OutboxSendException("Interrupted while publishing", e);
+		} catch (ExecutionException | TimeoutException | KafkaException e) {
+			throw new OutboxSendException("Fail to publish", e);
+		}
+	}
 }
