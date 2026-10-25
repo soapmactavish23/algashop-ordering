@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.core.application.order.saga;
+package com.algaworks.algashop.ordering.core.application;
 
 import com.algaworks.algashop.ordering.core.application.saga.SagaStatus;
 
