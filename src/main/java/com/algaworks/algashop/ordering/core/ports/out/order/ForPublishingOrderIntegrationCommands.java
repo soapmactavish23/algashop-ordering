@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.core.ports.out.order;
 
-import com.algaworks.algashop.ordering.core.application.IntegrationCommand;
+import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
 
 public interface ForPublishingOrderIntegrationCommands {
-	void send(IntegrationCommand command);
+	void send(OutboundIntegrationCommand command);
 }

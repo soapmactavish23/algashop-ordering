@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.core.application.checkout.command;
 
-import com.algaworks.algashop.ordering.core.application.IntegrationCommand;
+import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshot;
 import com.algaworks.algashop.ordering.core.domain.model.IdGenerator;
 import lombok.*;
@@ -12,12 +12,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProcessAcceptedCheckoutIntegrationCommand
-		implements IntegrationCommand {
+public class ProcessAcceptedCheckoutOutboundIntegrationCommand
+		implements OutboundIntegrationCommand {
 	private UUID idempotencyKey = IdGenerator.generateTimeBasedUUID();
 	private OrderSnapshot order;
 
-	public ProcessAcceptedCheckoutIntegrationCommand(OrderSnapshot order) {
+	public ProcessAcceptedCheckoutOutboundIntegrationCommand(OrderSnapshot order) {
 		this.order = order;
 	}
 

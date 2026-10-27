@@ -1,6 +1,4 @@
-package com.algaworks.algashop.ordering.core.application;
-
-import com.algaworks.algashop.ordering.core.application.saga.SagaStatus;
+package com.algaworks.algashop.ordering.core.application.saga;
 
 public class SagaTransitionException extends RuntimeException {
 

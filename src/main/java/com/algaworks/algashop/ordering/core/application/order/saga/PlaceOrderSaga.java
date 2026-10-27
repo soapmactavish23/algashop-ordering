@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.core.application.order.saga;
 
-import com.algaworks.algashop.ordering.core.application.SagaTransitionException;
+import com.algaworks.algashop.ordering.core.application.saga.SagaTransitionException;
 import com.algaworks.algashop.ordering.core.application.saga.SagaStatus;
 import com.algaworks.algashop.ordering.core.domain.model.IdGenerator;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;

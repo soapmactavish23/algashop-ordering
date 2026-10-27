@@ -1,9 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.adapters.out.messaging.outbox;
 
-import com.algaworks.algashop.ordering.core.application.IntegrationCommand;
-import com.algaworks.algashop.ordering.core.application.IntegrationEvent;
+import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
 import com.algaworks.algashop.ordering.core.ports.out.order.ForPublishingOrderIntegrationCommands;
-import com.algaworks.algashop.ordering.core.ports.out.order.ForPublishingOrderIntegrationEvents;
 import com.algaworks.algashop.ordering.infrastructure.config.kafka.AlgaShopMessagingKafkaProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +16,7 @@ public class OutboxOrderIntegrationCommandPublisher implements ForPublishingOrde
 	private final AlgaShopMessagingKafkaProperties properties;
 
 	@Override
-	public void send(IntegrationCommand command) {
+	public void send(OutboundIntegrationCommand command) {
 		recorder.record(properties.getOrderCommandTopicName(), command.getAggregateId(), command);
 	}
 }

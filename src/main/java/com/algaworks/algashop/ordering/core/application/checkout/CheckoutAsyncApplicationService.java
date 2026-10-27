@@ -2,7 +2,7 @@ package com.algaworks.algashop.ordering.core.application.checkout;
 
 import com.algaworks.algashop.ordering.core.application.order.BillingInputDisassembler;
 import com.algaworks.algashop.ordering.core.application.order.ShippingInputDisassembler;
-import com.algaworks.algashop.ordering.core.application.checkout.command.ProcessAcceptedCheckoutIntegrationCommand;
+import com.algaworks.algashop.ordering.core.application.checkout.command.ProcessAcceptedCheckoutOutboundIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshot;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshotAssembler;
 import com.algaworks.algashop.ordering.core.application.security.SecurityChecks;
@@ -78,7 +78,7 @@ public class CheckoutAsyncApplicationService implements ForBuyingWithShoppingCar
 
 		OrderSnapshot snapshot = orderSnapshotAssembler.toSnapshot(order, shoppingCart.id().value());
 
-		ProcessAcceptedCheckoutIntegrationCommand integrationCommand = new ProcessAcceptedCheckoutIntegrationCommand(snapshot);
+		ProcessAcceptedCheckoutOutboundIntegrationCommand integrationCommand = new ProcessAcceptedCheckoutOutboundIntegrationCommand(snapshot);
 		forPublishingOrderIntegrationCommands.send(integrationCommand);
 
 		return order.id().toString();

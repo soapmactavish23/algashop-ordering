@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.adapters.in.messaging.kafka.order;
 
-import com.algaworks.algashop.ordering.core.application.checkout.command.ProcessAcceptedCheckoutIntegrationCommand;
+import com.algaworks.algashop.ordering.core.application.checkout.command.ProcessAcceptedCheckoutOutboundIntegrationCommand;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.ForProcessingCheckoutAccepted;
 import com.algaworks.algashop.ordering.core.ports.out.idempotency.ForGuardingIdempotency;
 import com.algaworks.algashop.ordering.infrastructure.config.kafka.KafkaConfig;
@@ -29,7 +29,7 @@ public class KafkaOrderIntegrationCommandListener {
 	private final ForGuardingIdempotency forGuardingIdempotency;
 
 	@KafkaHandler
-	public void handle(@Payload ProcessAcceptedCheckoutIntegrationCommand integrationCommand,
+	public void handle(@Payload ProcessAcceptedCheckoutOutboundIntegrationCommand integrationCommand,
 	                   @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String messageKey,
 	                   @Header(value = KafkaHeaders.RECEIVED_PARTITION, required = false) Integer partition,
 	                   @Header(value = KafkaHeaders.OFFSET, required = false) Integer offset,
