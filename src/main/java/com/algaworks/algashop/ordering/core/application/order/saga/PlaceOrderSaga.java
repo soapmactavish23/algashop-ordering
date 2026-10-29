@@ -38,6 +38,11 @@ public class PlaceOrderSaga {
         return new PlaceOrderSaga(sagaId, orderId, status, step, version);
     }
 
+    public void moveToInvocing() {
+        require(isRunningAt(PlaceOrderSagaStep.PLACING_ORDER));
+        changeStepTo(PlaceOrderSagaStep.INVOICING);
+    }
+
     public boolean isCompensatingAt(PlaceOrderSagaStep step) {
         return this.status == SagaStatus.COMPENSATING && this.step == step;
     }
@@ -70,7 +75,7 @@ public class PlaceOrderSaga {
         return version;
     }
 
-    private void required(boolean precondition) {
+    private void require(boolean precondition) {
         if(!precondition) {
             throw SagaTransitionException.notAllowed(orderId(), status(), step());
         }
