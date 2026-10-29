@@ -66,16 +66,6 @@ public class KafkaConfig {
 		return createDeadLetterTopic(properties.getOrderEventTopicName());
 	}
 
-	@Bean
-	public NewTopic orderCommandsDlt(AlgaShopMessagingKafkaProperties properties) {
-		return createDeadLetterTopic(properties.getOrderCommandTopicName());
-	}
-
-	@Bean
-	public NewTopic invoiceEventsDlt(AlgaShopMessagingKafkaProperties properties) {
-		return createDeadLetterTopic(properties.getInvoiceEventTopicName());
-	}
-
 	private NewTopic createDeadLetterTopic(String originTopicName) {
 		return TopicBuilder.name(DLT_PREFIX + originTopicName)
 				.partitions(TOPIC_PARTITIONS)
@@ -99,8 +89,13 @@ public class KafkaConfig {
 	}
 
 	@Bean
-	public NewTopic ordersCommandsTopic(AlgaShopMessagingKafkaProperties properties) {
-		return TopicBuilder.name(properties.getOrderCommandTopicName())
+	public NewTopic sagaRepliesDlt(AlgaShopMessagingKafkaProperties properties) {
+		return createDeadLetterTopic(properties.getSagaRepliesTopicName());
+	}
+
+	@Bean
+	public NewTopic sagaRepliesTopic(AlgaShopMessagingKafkaProperties properties) {
+		return TopicBuilder.name(properties.getSagaRepliesTopicName())
 				.partitions(TOPIC_PARTITIONS)
 				.replicas(TOPIC_REPLICAS)
 				.configs(Map.of(
@@ -108,5 +103,4 @@ public class KafkaConfig {
 				))
 				.build();
 	}
-
 }
