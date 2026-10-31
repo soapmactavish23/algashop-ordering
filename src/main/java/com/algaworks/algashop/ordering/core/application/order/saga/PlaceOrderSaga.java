@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.core.application.order.saga;
 
-import com.algaworks.algashop.ordering.core.application.saga.SagaTransitionException;
 import com.algaworks.algashop.ordering.core.application.saga.SagaStatus;
+import com.algaworks.algashop.ordering.core.application.saga.SagaTransitionException;
 import com.algaworks.algashop.ordering.core.domain.model.IdGenerator;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
 
@@ -10,101 +10,100 @@ import java.util.UUID;
 
 public class PlaceOrderSaga {
 
-    private final UUID sagaId;
-    private final OrderId orderId;
-    private SagaStatus status;
-    private PlaceOrderSagaStep step;
-    private long version;
+	private final UUID sagaId;
+	private final OrderId orderId;
+	private SagaStatus status;
+	private PlaceOrderSagaStep step;
+	private long version;
 
-    private PlaceOrderSaga(UUID sagaId, OrderId orderId, SagaStatus status, PlaceOrderSagaStep step, long version) {
-        this.sagaId = Objects.requireNonNull(sagaId);
-        this.orderId = Objects.requireNonNull(orderId);
-        this.status = Objects.requireNonNull(status);
-        this.step = Objects.requireNonNull(step);
-        this.version = version;
-    }
+	private PlaceOrderSaga(UUID sagaId, OrderId orderId, SagaStatus status, PlaceOrderSagaStep step, long version) {
+		this.sagaId = Objects.requireNonNull(sagaId);
+		this.orderId = Objects.requireNonNull(orderId);
+		this.status = Objects.requireNonNull(status);
+		this.step = Objects.requireNonNull(step);
+		this.version = version;
+	}
 
-    public static PlaceOrderSaga start(OrderId orderId) {
-        return new PlaceOrderSaga(
-                IdGenerator.generateTimeBasedUUID(),
-                orderId,
-                SagaStatus.RUNNING,
-                PlaceOrderSagaStep.PLACING_ORDER,
-                0L
-        );
-    }
+	public static PlaceOrderSaga start(OrderId orderId) {
+		return new PlaceOrderSaga(
+				IdGenerator.generateTimeBasedUUID(),
+				orderId,
+				SagaStatus.RUNNING,
+				PlaceOrderSagaStep.PLACING_ORDER,
+				0L
+		);
+	}
 
-    public static PlaceOrderSaga existing(UUID sagaId, OrderId orderId, SagaStatus status, PlaceOrderSagaStep step, long version) {
-        return new PlaceOrderSaga(sagaId, orderId, status, step, version);
-    }
+	public static PlaceOrderSaga existing(UUID sagaId, OrderId orderId, SagaStatus status, PlaceOrderSagaStep step, long version) {
+		return new PlaceOrderSaga(sagaId, orderId, status, step, version);
+	}
 
-    public void moveToInvocing() {
-        require(isRunningAt(PlaceOrderSagaStep.PLACING_ORDER));
-        changeStepTo(PlaceOrderSagaStep.INVOICING);
-    }
+	public void moveToInvoicing() {
+		require(isRunningAt(PlaceOrderSagaStep.PLACING_ORDER));
+		changeStepTo(PlaceOrderSagaStep.INVOICING);
+	}
 
-    public boolean isCompensatingAt(PlaceOrderSagaStep step) {
-        return this.status == SagaStatus.COMPENSATING && this.step == step;
-    }
+	public boolean isRunningAt(PlaceOrderSagaStep step) {
+		return this.status == SagaStatus.RUNNING && this.step == step;
+	}
 
-    public boolean isRunningAt(PlaceOrderSagaStep step) {
-        return this.status == SagaStatus.RUNNING && this.step == step;
-    }
+	public boolean isCompensatingAt(PlaceOrderSagaStep step) {
+		return this.status == SagaStatus.COMPENSATING && this.step == step;
+	}
 
-    public boolean isActive() {
-        return this.status == SagaStatus.RUNNING || this.status == SagaStatus.COMPENSATING;
-    }
+	public boolean isActive() {
+		return this.status == SagaStatus.RUNNING || this.status == SagaStatus.COMPENSATING;
+	}
 
-    public UUID sagaId() {
-        return sagaId;
-    }
+	public long version() {
+		return version;
+	}
 
-    public OrderId orderId() {
-        return orderId;
-    }
+	public PlaceOrderSagaStep step() {
+		return step;
+	}
 
-    public SagaStatus status() {
-        return status;
-    }
+	public SagaStatus status() {
+		return status;
+	}
 
-    public PlaceOrderSagaStep step() {
-        return step;
-    }
+	public OrderId orderId() {
+		return orderId;
+	}
 
-    public long version() {
-        return version;
-    }
+	public UUID sagaId() {
+		return sagaId;
+	}
 
-    private void require(boolean precondition) {
-        if(!precondition) {
-            throw SagaTransitionException.notAllowed(orderId(), status(), step());
-        }
-    }
+	private void require(boolean precondition) {
+		if(!precondition) {
+			throw SagaTransitionException.notAllowed(orderId(), status(), step());
+		}
+	}
 
-    private void changeStatusTo(SagaStatus newStatus) {
-        if(this.status().canNotChangeTo(newStatus)) {
-            throw SagaTransitionException.statusChange(orderId(), status(), newStatus);
-        }
+	private void changeStatusTo(SagaStatus newStatus) {
+		if (this.status().canNotChangeTo(newStatus)) {
+			throw SagaTransitionException.statusChange(orderId(), status(), newStatus);
+		}
+		this.status = newStatus;
+	}
 
-        this.status = status;
-    }
+	private void changeStepTo(PlaceOrderSagaStep newStep) {
+		if (step().canNotChangeTo(newStep)) {
+			throw SagaTransitionException.stepChange(orderId(), step(), newStep);
+		}
+		this.step = newStep;
+	}
 
-    private void changeStepTo(PlaceOrderSagaStep newStep) {
-        if(step().canNotChangeTo(newStep)) {
-            throw SagaTransitionException.stepChange(orderId(), step(), newStep);
-        }
+	@Override
+	public String toString() {
+		return "PlaceOrderSaga{" +
+				"sagaId=" + sagaId +
+				", orderId=" + orderId +
+				", status=" + status +
+				", step=" + step +
+				", version=" + version +
+				'}';
+	}
 
-        this.step = newStep;
-    }
-
-    @Override
-    public String toString() {
-        return "PlaceOrderSaga{" +
-                "sagaId=" + sagaId +
-                ", orderId=" + orderId +
-                ", status=" + status +
-                ", step=" + step +
-                ", version=" + version +
-                '}';
-    }
 }

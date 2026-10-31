@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.core.application.invoice.event;
+package com.algaworks.algashop.ordering.core.application.order.event;
 
 import com.algaworks.algashop.ordering.core.application.OutboundIntegrationEvent;
 import jakarta.validation.constraints.NotBlank;
@@ -15,10 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvoicePaidIntegrationEvent implements OutboundIntegrationEvent {
-
-    @NotNull
-    private UUID invoiceId;
+public class OrderReadyIntegrationEvent implements OutboundIntegrationEvent {
 
     @NotBlank
     private String orderId;
@@ -27,11 +24,10 @@ public class InvoicePaidIntegrationEvent implements OutboundIntegrationEvent {
     private UUID customerId;
 
     @NotNull
-    private OffsetDateTime paidAt;
+    private OffsetDateTime readyAt;
 
     @Override
     public String getAggregateId() {
-        return invoiceId.toString();
+        return orderId;
     }
-
 }

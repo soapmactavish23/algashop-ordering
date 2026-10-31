@@ -1,7 +1,11 @@
 package com.algaworks.algashop.ordering.core.application.invoice.command;
 
 import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
-import com.algaworks.algashop.ordering.core.application.order.snapshot.*;
+import com.algaworks.algashop.ordering.core.application.order.snapshot.BillingSnapshot;
+import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderItemSnapshot;
+import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshot;
+import com.algaworks.algashop.ordering.core.application.order.snapshot.PaymentSnapshot;
+import com.algaworks.algashop.ordering.core.application.order.snapshot.ShippingSnapshot;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

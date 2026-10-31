@@ -9,23 +9,23 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 @ConditionalOnProperty(name = "algashop.messaging.outbox.enabled", havingValue = "true")
+@RequiredArgsConstructor
 public class OutboxPlaceOrderSagaIntegrationCommandPublisher
-        implements ForPublishingPlaceOrderSagaIntegrationCommands {
+		implements ForPublishingPlaceOrderSagaIntegrationCommands {
 
-    private final OutboxRecorder recorder;
-    private final PlaceOrderSagaCommandTopics topics;
-    private final AlgaShopMessagingKafkaProperties properties;
+	private final OutboxRecorder recorder;
+	private final PlaceOrderSagaCommandTopics topics;
+	private final AlgaShopMessagingKafkaProperties properties;
 
-    @Override
-    public void send(String correlationId, OutboundIntegrationCommand command) {
-        recorder.record(OutboxDraft.builder()
-                        .aggregateId(command.getAggregateId())
-                        .correlationId(correlationId)
-                        .payload(command)
-                        .channelName(topics.of(command))
-                        .replyTopic(properties.getSagaRepliesTopicName())
-                .build());
-    }
+	@Override
+	public void send(String correlationId, OutboundIntegrationCommand command) {
+		recorder.record(OutboxDraft.builder()
+						.aggregateId(command.getAggregateId())
+						.correlationId(correlationId)
+						.payload(command)
+						.channelName(topics.of(command))
+						.replyTopic(properties.getSagaRepliesTopicName())
+				.build());
+	}
 }

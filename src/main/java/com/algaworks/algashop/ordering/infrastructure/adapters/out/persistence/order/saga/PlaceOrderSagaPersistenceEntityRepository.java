@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface PlaceOrderSagaPersistenceEntityRepository
-        extends JpaRepository<PlaceOrderSagaPersistenceEntity, UUID> {
+		extends JpaRepository<PlaceOrderSagaPersistenceEntity, UUID> {
 }

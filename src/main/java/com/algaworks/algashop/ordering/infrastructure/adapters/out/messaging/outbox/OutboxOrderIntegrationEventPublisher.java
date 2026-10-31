@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OutboxOrderIntegrationEventPublisher implements ForPublishingOrderIntegrationEvents {
 
-    private final OutboxRecorder recorder;
-    private final AlgaShopMessagingKafkaProperties properties;
+	private final OutboxRecorder recorder;
+	private final AlgaShopMessagingKafkaProperties properties;
 
-    @Override
-    public void send(OutboundIntegrationEvent event) {
-        recorder.record(OutboxDraft.builder()
-                .channelName(properties.getOrderEventTopicName())
-                .aggregateId(event.getAggregateId())
-                .payload(event)
-                .build()
-        );
-    }
+	@Override
+	public void send(OutboundIntegrationEvent event) {
+		recorder.record(OutboxDraft.builder()
+				.channelName(properties.getOrderEventTopicName())
+				.aggregateId(event.getAggregateId())
+				.payload(event)
+				.build()
+		);
+	}
 }

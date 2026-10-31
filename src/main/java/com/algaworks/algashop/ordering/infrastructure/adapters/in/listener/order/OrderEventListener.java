@@ -23,7 +23,7 @@ public class OrderEventListener {
     private final ForCoordinatingPlaceOrderSaga forCoordinatingPlaceOrderSaga;
 
     @EventListener
-    public void listen(OrderPlacedEvent event) {
+    public void onOrderPlacedPublishIntegrationEvent(OrderPlacedEvent event) {
         Order order = orders.ofId(event.orderId()).orElseThrow(OrderNotFoundException::new);
         OrderPlacedIntegrationEvent integrationEvent = orderPlacedIntegrationEventAssembler.toIntegrationEvent(order);
         forPublishingOrderIntegrationEvents.send(integrationEvent);
@@ -43,7 +43,8 @@ public class OrderEventListener {
 
     @EventListener
     public void listen(OrderReadyEvent event) {
-
+        OrderReadyIntegrationEvent integrationEvent = mapper.convert(event, OrderReadyIntegrationEvent.class);
+        forPublishingOrderIntegrationEvents.send(integrationEvent);
     }
 
     @EventListener

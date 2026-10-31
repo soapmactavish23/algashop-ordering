@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PlaceOrderSagaCommandTopics {
 
-    private final AlgaShopMessagingKafkaProperties properties;
+	private final AlgaShopMessagingKafkaProperties properties;
 
-    public String of(OutboundIntegrationCommand command) {
-        return switch (command) {
-            case IssueInvoiceIntegrationCommand ignored -> properties.getBillingInvoiceCommandsTopicName();
-            default -> throw new IllegalArgumentException("Unsupported saga command " + command.getClass().getSimpleName());
-        };
-    }
+	public String of(OutboundIntegrationCommand command) {
+		return switch (command) {
+			case IssueInvoiceIntegrationCommand ignored -> properties.getBillingInvoiceCommandsTopicName();
+			default -> throw new IllegalArgumentException("Unsupported saga command " + command.getClass().getSimpleName());
+		};
+	}
 
 }

@@ -13,7 +13,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -42,11 +41,11 @@ public class OutboxKafkaSender {
 		record.headers().add(KafkaConfig.TYPE_ID_HEADER, message.getMessageType().getBytes(StandardCharsets.UTF_8));
 		record.headers().add(KafkaConfig.IDEMPOTENCY_KEY_HEADER, message.getId().toString().getBytes(StandardCharsets.UTF_8));
 
-		if(message.getCorrelationId() != null) {
+		if (message.getCorrelationId() != null) {
 			record.headers().add(KafkaHeaders.CORRELATION_ID, message.getCorrelationId().getBytes(StandardCharsets.UTF_8));
 		}
 
-		if(message.getReplyTopic() != null) {
+		if (message.getReplyTopic() != null) {
 			record.headers().add(KafkaHeaders.REPLY_TOPIC, message.getReplyTopic().getBytes(StandardCharsets.UTF_8));
 		}
 

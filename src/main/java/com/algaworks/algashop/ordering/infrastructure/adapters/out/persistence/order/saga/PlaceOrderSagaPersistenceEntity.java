@@ -19,10 +19,9 @@ import lombok.ToString;
 @DiscriminatorValue(PlaceOrderSagaPersistenceEntity.SAGA_TYPE)
 public class PlaceOrderSagaPersistenceEntity extends SagaInstancePersistenceEntity {
 
+	public static final String SAGA_TYPE = "PLACE_ORDER";
 
-    public static final String SAGA_TYPE = "PLACE_ORDER";
-
-    @Enumerated(EnumType.STRING)
-    private PlaceOrderSagaStep step;
+	@Enumerated(EnumType.STRING)
+	private PlaceOrderSagaStep step;
 
 }

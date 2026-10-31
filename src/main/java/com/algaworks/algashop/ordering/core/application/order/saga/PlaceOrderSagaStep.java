@@ -4,28 +4,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PlaceOrderSagaStep {
+	PLACING_ORDER,
+	INVOICING(PLACING_ORDER),
+	RESERVING_STOCK(INVOICING),
+	APPROVING_ORDER(RESERVING_STOCK),
+	
+	REFUNDING_INVOICE(RESERVING_STOCK),
+	CANCELLING_ORDER(INVOICING, REFUNDING_INVOICE);
 
-    PLACING_ORDER,
-    INVOICING(PLACING_ORDER),
-    RESERVING_STOCK(INVOICING),
-    APPROVING_ORDER(RESERVING_STOCK),
+	PlaceOrderSagaStep(PlaceOrderSagaStep... previousStatuses) {
+		this.previousStatuses = Arrays.asList(previousStatuses);
+	}
 
-    REFUNDING_INVOICE(RESERVING_STOCK),
-    CANCELLING_ORDER(INVOICING, REFUNDING_INVOICE);
+	private final List<PlaceOrderSagaStep> previousStatuses;
 
-    PlaceOrderSagaStep(PlaceOrderSagaStep... previousStatuses) {
-        this.previousStatuses = Arrays.asList(previousStatuses);
-    }
+	public boolean canChangeTo(PlaceOrderSagaStep newStatus) {
+		PlaceOrderSagaStep currentStatus = this;
+		return newStatus.previousStatuses.contains(currentStatus);
+	}
 
-    private final List<PlaceOrderSagaStep> previousStatuses;
-
-    public boolean canChangeTo(PlaceOrderSagaStep newStatus) {
-        PlaceOrderSagaStep currentStatus = this;
-        return newStatus.previousStatuses.contains(currentStatus);
-    }
-
-    public boolean canNotChangeTo(PlaceOrderSagaStep newStatus) {
-        return !canChangeTo(newStatus);
-    }
-    
+	public boolean canNotChangeTo(PlaceOrderSagaStep newStatus) {
+		return !canChangeTo(newStatus);
+	}
 }

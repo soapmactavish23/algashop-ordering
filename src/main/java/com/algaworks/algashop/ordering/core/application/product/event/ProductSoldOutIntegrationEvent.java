@@ -14,6 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductSoldOutIntegrationEvent implements InboundIntegrationEvent {
-    private UUID productId;
-    private OffsetDateTime soldOutAt;
+	private UUID productId;
+	private OffsetDateTime soldOutAt;
 }

@@ -12,10 +12,7 @@ import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.core.domain.model.order.*;
 import com.algaworks.algashop.ordering.core.domain.model.order.shipping.OriginAddressService;
 import com.algaworks.algashop.ordering.core.domain.model.order.shipping.ShippingCostService;
-import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductCatalogService;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
-import com.algaworks.algashop.ordering.core.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCart;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartNotFoundException;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCarts;
@@ -101,11 +98,6 @@ public class CheckoutApplicationService implements ForBuyingWithShoppingCart {
 		ZipCode origin = originAddressService.originAddress().zipCode();
 		ZipCode destination = new ZipCode(shipping.getAddress().getZipCode());
 		return shippingCostService.calculate(new ShippingCostService.CalculationRequest(origin, destination));
-	}
-
-	private Product findProduct(ProductId productId) {
-		return productCatalogService.ofId(productId)
-				.orElseThrow(()-> new ProductNotFoundException());
 	}
 
 	private void verifyCanOrderFor(@NotNull UUID customerId) {

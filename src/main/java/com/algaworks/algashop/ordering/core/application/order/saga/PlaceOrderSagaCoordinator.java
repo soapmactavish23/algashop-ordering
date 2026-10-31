@@ -15,35 +15,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga {
 
-    private final ForStoringPlaceOrderSagas sagas;
-    private final Orders orders;
-    private final OrderSnapshotAssembler orderSnapshotAssembler;
+	private final ForStoringPlaceOrderSagas sagas;
 
-    private final ForPublishingPlaceOrderSagaIntegrationCommands commands;
+	private final Orders orders;
+	private final OrderSnapshotAssembler orderSnapshotAssembler;
 
-    @Override
-    @Transactional
-    public void start(String rawOrderId) {
-        OrderId orderId = new OrderId(rawOrderId);
-        Order order = findOrder(orderId);
-        OrderSnapshot snapshot = orderSnapshotAssembler.toSnapshot(order);
-        IssueInvoiceIntegrationCommand command = IssueInvoiceIntegrationCommand.from(snapshot);
+	private final ForPublishingPlaceOrderSagaIntegrationCommands commands;
 
-        PlaceOrderSaga saga = PlaceOrderSaga.start(orderId);
-        saga.moveToInvocing();
-        sagas.add(saga);
+	@Override
+	@Transactional
+	public void start(String rawOrderId) {
+		OrderId orderId = new OrderId(rawOrderId);
+		Order order = findOrder(orderId);
+		OrderSnapshot snapshot = orderSnapshotAssembler.toSnapshot(order);
+		IssueInvoiceIntegrationCommand command = IssueInvoiceIntegrationCommand.from(snapshot);
 
-        commands.send(saga.sagaId().toString(), command);
+		PlaceOrderSaga saga = PlaceOrderSaga.start(orderId);
+		saga.moveToInvoicing();
+		sagas.add(saga);
 
-        log.info("Place order saga started: saga={} order={}", saga.sagaId(), saga.orderId());
-    }
+		commands.send(saga.sagaId().toString(), command);
 
-    private Order findOrder(OrderId orderId) {
-        return orders.ofId(orderId).orElseThrow(OrderNotFoundException::new);
-    }
+		log.info("Place order saga started: saga={} order={}", saga.sagaId(), saga.orderId());
+	}
+
+	private Order findOrder(OrderId orderId) {
+		return orders.ofId(orderId).orElseThrow(OrderNotFoundException::new);
+	}
 }

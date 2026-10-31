@@ -28,12 +28,12 @@ public class OutboxRecorder {
 		RecordHeaders headers = new RecordHeaders();
 		byte[] payload = outboxJsonSerializer.serialize(draft.channelName(), headers, message);
 
-		String eventType = readMessageType(headers, message);
+		String messageType = readMessageType(headers, message);
 
 		OutboxMessage outboxMessage = OutboxMessage.builder()
 				.channelName(draft.channelName())
 				.aggregateId(draft.aggregateId())
-				.messageType(eventType)
+				.messageType(messageType)
 				.replyTopic(draft.replyTopic())
 				.correlationId(draft.correlationId())
 				.payload(new String(payload, StandardCharsets.UTF_8))

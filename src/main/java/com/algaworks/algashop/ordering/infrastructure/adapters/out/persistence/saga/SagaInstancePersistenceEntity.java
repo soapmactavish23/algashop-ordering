@@ -14,30 +14,30 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(of = {"sagaId", "status"})
+@ToString(of = { "sagaId", "status" })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "sage_instance")
+@Table(name = "saga_instance")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "saga_type", length = 50)
-public class SagaInstancePersistenceEntity {
+public abstract class SagaInstancePersistenceEntity {
 
-    @Id
-    @EqualsAndHashCode.Include
-    private UUID sagaId;
+	@Id
+	@EqualsAndHashCode.Include
+	private UUID sagaId;
 
-    private String aggregateId;
+	private String aggregateId;
 
-    @Enumerated(EnumType.STRING)
-    private SagaStatus status;
+	@Enumerated(EnumType.STRING)
+	private SagaStatus status;
 
-    @CreatedDate
-    private OffsetDateTime createdAt;
+	@CreatedDate
+	private OffsetDateTime createdAt;
 
-    @LastModifiedDate
-    private OffsetDateTime updateAt;
+	@LastModifiedDate
+	private OffsetDateTime updatedAt;
 
-    @Version
-    private long version;
+	@Version
+	private long version;
 
 }

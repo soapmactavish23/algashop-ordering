@@ -6,6 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ForStoringPlaceOrderSagas {
-    Optional<PlaceOrderSaga> ofId(UUID sagaId);
-    void add(PlaceOrderSaga saga);
+	Optional<PlaceOrderSaga> ofId(UUID sagaId);
+	void add(PlaceOrderSaga saga);
 }

@@ -15,36 +15,36 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class PlaceOrderSagasPersistenceProvider implements ForStoringPlaceOrderSagas {
 
-    private final PlaceOrderSagaPersistenceEntityRepository repository;
+	private final PlaceOrderSagaPersistenceEntityRepository repository;
 
-    @Override
-    public Optional<PlaceOrderSaga> ofId(UUID sagaId) {
-        return repository.findById(sagaId).map(this::toSaga);
-    }
+	@Override
+	public Optional<PlaceOrderSaga> ofId(UUID sagaId) {
+		return repository.findById(sagaId).map(this::toSaga);
+	}
 
-    @Override
-    @Transactional(readOnly = false)
-    public void add(PlaceOrderSaga saga) {
-        repository.saveAndFlush(toEntity(saga));
-    }
+	@Override
+	@Transactional(readOnly = false)
+	public void add(PlaceOrderSaga saga) {
+		repository.saveAndFlush(toEntity(saga));
+	}
 
-    private PlaceOrderSaga toSaga(PlaceOrderSagaPersistenceEntity entity) {
-        return PlaceOrderSaga.existing(
-                entity.getSagaId(),
-                new OrderId(entity.getAggregateId()),
-                entity.getStatus(),
-                entity.getStep(),
-                entity.getVersion()
-        );
-    }
 
-    private PlaceOrderSagaPersistenceEntity toEntity(PlaceOrderSaga saga) {
-        PlaceOrderSagaPersistenceEntity entity = new PlaceOrderSagaPersistenceEntity();
-        entity.setSagaId(saga.sagaId());
-        entity.setAggregateId(saga.orderId().toString());
-        entity.setStatus(saga.status());
-        entity.setStep(saga.step());
-        entity.setVersion(saga.version());
-        return entity;
-    }
+	private PlaceOrderSaga toSaga(PlaceOrderSagaPersistenceEntity entity) {
+		return PlaceOrderSaga.existing(
+				entity.getSagaId(),
+				new OrderId(entity.getAggregateId()),
+				entity.getStatus(),
+				entity.getStep(),
+				entity.getVersion());
+	}
+
+	private PlaceOrderSagaPersistenceEntity toEntity(PlaceOrderSaga saga) {
+		PlaceOrderSagaPersistenceEntity entity = new PlaceOrderSagaPersistenceEntity();
+		entity.setSagaId(saga.sagaId());
+		entity.setAggregateId(saga.orderId().toString());
+		entity.setStatus(saga.status());
+		entity.setStep(saga.step());
+		entity.setVersion(saga.version());
+		return entity;
+	}
 }

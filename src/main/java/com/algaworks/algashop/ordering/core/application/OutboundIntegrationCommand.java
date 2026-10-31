@@ -7,6 +7,7 @@ import java.util.UUID;
 public interface OutboundIntegrationCommand {
 	@JsonIgnore
 	String getAggregateId();
+
 	@JsonIgnore
 	default UUID getIdempotencyKey() {
 		return null;
