@@ -15,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+import java.util.UUID;
+
 @Slf4j
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga {
 
@@ -43,6 +46,22 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 
 		log.info("Place order saga started: saga={} order={}", saga.sagaId(), saga.orderId());
 	}
+
+	@Override
+	@Transactional
+	public void onInvoicePaid(UUID sagaId) {
+		PlaceOrderSaga saga = findSaga(sagaId);
+		Order order = findOrder(saga.orderId());
+
+		order.markAsPaid();
+		orders.add(order);
+
+		//todo
+	}
+
+    private PlaceOrderSaga findSaga(UUID sagaId) {
+        return sagas.ofId(sagaId).orElseThrow(() -> new PlaceOrderSagaNotFoundException(sagaId));
+    }
 
 	private Order findOrder(OrderId orderId) {
 		return orders.ofId(orderId).orElseThrow(OrderNotFoundException::new);
