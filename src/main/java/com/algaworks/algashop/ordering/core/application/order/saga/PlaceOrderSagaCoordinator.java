@@ -1,8 +1,10 @@
 package com.algaworks.algashop.ordering.core.application.order.saga;
 
+import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.invoice.command.IssueInvoiceIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshot;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshotAssembler;
+import com.algaworks.algashop.ordering.core.application.stock.command.ReserveStockIntegrationCommand;
 import com.algaworks.algashop.ordering.core.domain.model.order.Order;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderNotFoundException;
@@ -51,15 +53,37 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 	@Transactional
 	public void onInvoicePaid(UUID sagaId) {
 		PlaceOrderSaga saga = findSaga(sagaId);
+
+		if(saga.isReservingStock()) {
+			logIgnored(saga);
+			return;
+		}
+
 		Order order = findOrder(saga.orderId());
 
 		order.markAsPaid();
 		orders.add(order);
 
-		//todo
+		saga.moveToReservingStock();
+		sagas.add(saga);
+
+		commands.send(saga.sagaId().toString(), reserveStockIntegrationCommand(order));
 	}
 
-    private PlaceOrderSaga findSaga(UUID sagaId) {
+    private void logIgnored(PlaceOrderSaga saga) {
+        log.info("Saga reply was ignored: saga={} order={} status={} step={}",
+				saga.sagaId(), saga.orderId(), saga.status(), saga.status());
+    }
+
+	private OutboundIntegrationCommand reserveStockIntegrationCommand(Order order) {
+        return new ReserveStockIntegrationCommand(
+				order.id().toString(),
+				order.items().stream().map(item -> new ReserveStockIntegrationCommand.Item(
+						item.productId().value(), item.quantity().value()
+				)).toList());
+    }
+
+	private PlaceOrderSaga findSaga(UUID sagaId) {
         return sagas.ofId(sagaId).orElseThrow(() -> new PlaceOrderSagaNotFoundException(sagaId));
     }
 
