@@ -54,7 +54,7 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 	public void onInvoicePaid(UUID sagaId) {
 		PlaceOrderSaga saga = findSaga(sagaId);
 
-		if(saga.isReservingStock()) {
+		if(saga.isReservingStock() || saga.hasSucceeded()) {
 			logIgnored(saga);
 			return;
 		}
@@ -70,7 +70,25 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 		commands.send(saga.sagaId().toString(), reserveStockIntegrationCommand(order));
 	}
 
-    private void logIgnored(PlaceOrderSaga saga) {
+	@Override
+	public void onStockReservationConfirmed(UUID sagaId) {
+		PlaceOrderSaga saga = findSaga(sagaId);
+
+		if(saga.hasSucceeded()) {
+			logIgnored(saga);
+			return;
+		}
+
+		Order order = findOrder(saga.orderId());
+		order.markAsReady();
+		orders.add(order);
+
+		saga.moveToApprovingOrder();
+		saga.endSucceeded();
+		sagas.add(saga);
+	}
+
+	private void logIgnored(PlaceOrderSaga saga) {
         log.info("Saga reply was ignored: saga={} order={} status={} step={}",
 				saga.sagaId(), saga.orderId(), saga.status(), saga.status());
     }
