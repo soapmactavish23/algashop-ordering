@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.core.application.order.saga;
 
 import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
+import com.algaworks.algashop.ordering.core.application.invoice.command.CancelInvoiceIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.invoice.command.IssueInvoiceIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshot;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshotAssembler;
@@ -108,6 +109,24 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 		saga.compensateOrder();
 		saga.endCompensated();
 		sagas.add(saga);
+	}
+
+	@Override
+	public void onStockReservationRejected(UUID sagaId) {
+		PlaceOrderSaga saga = findSaga(sagaId);
+		findOrder(saga.orderId());
+
+		if(saga.wasStockRejected()) {
+			logIgnored(saga);
+			return;
+		}
+
+		saga.failWithOutOfStock();
+		saga.compensateInvoice();
+		sagas.add(saga);
+
+		commands.send(saga.sagaId().toString(), new CancelInvoiceIntegrationCommand(saga.orderId().toString()));
+
 	}
 
 	private void logIgnored(PlaceOrderSaga saga) {
