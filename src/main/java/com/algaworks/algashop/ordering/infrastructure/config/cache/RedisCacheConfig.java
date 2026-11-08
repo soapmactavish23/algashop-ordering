@@ -21,9 +21,9 @@ public class RedisCacheConfig {
         var defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .computePrefixWith(c -> c + ":")
                 .entryTtl(Duration.ofMinutes(1));
-        return (builder) -> builder.cacheDefaults(defaultCacheConfig)
+        return builder -> builder.cacheDefaults(defaultCacheConfig)
                 .withCacheConfiguration(PRODUCT_CATALOG_API_CACHE_NAME,
-                        defaultCacheConfig.disableCachingNullValues().entryTtl(Duration.ofMinutes(5)));
+                        defaultCacheConfig.disableCachingNullValues().entryTtl(Duration.ofMinutes(1)));
     }
 
 }

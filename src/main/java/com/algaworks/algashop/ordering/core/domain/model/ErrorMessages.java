@@ -39,4 +39,6 @@ public class ErrorMessages {
     public static final String ERROR_CUSTOMER_EMAIL_IS_IN_USE = "Customer email is in use";
 
     public static final String ERROR_CUSTOMER_ALREADY_HAVE_SHOPPING_CART = "Customer %s already have a Shopping Cart";
+
+    public static final String ERROR_PRODUCT_INSUFFICIENT_STOCK = "Product %s doesn't have the necessary quantity of %s";
 }
