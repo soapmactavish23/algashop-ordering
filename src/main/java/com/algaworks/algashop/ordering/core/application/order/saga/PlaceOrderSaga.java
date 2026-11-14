@@ -17,10 +17,10 @@ public class PlaceOrderSaga {
 	private PlaceOrderSagaFailure failure;
 	private long version;
 
-	private PlaceOrderSaga(UUID sagaId,
-						   OrderId orderId, SagaStatus status, PlaceOrderSagaStep step,
-						   PlaceOrderSagaFailure failure,
-						   long version) {
+	private PlaceOrderSaga(UUID sagaId, OrderId orderId,
+	                       SagaStatus status, PlaceOrderSagaStep step,
+	                       PlaceOrderSagaFailure failure,
+	                       long version) {
 		this.sagaId = Objects.requireNonNull(sagaId);
 		this.orderId = Objects.requireNonNull(orderId);
 		this.status = Objects.requireNonNull(status);
@@ -41,9 +41,10 @@ public class PlaceOrderSaga {
 	}
 
 	public static PlaceOrderSaga existing(UUID sagaId, OrderId orderId,
-										  SagaStatus status, PlaceOrderSagaStep step,
-										  PlaceOrderSagaFailure failure,
-										  long version) {
+	                                      SagaStatus status,
+	                                      PlaceOrderSagaStep step,
+	                                      PlaceOrderSagaFailure failure,
+	                                      long version) {
 		return new PlaceOrderSaga(sagaId, orderId, status, step, failure, version);
 	}
 
@@ -89,12 +90,12 @@ public class PlaceOrderSaga {
 		startCompensation(PlaceOrderSagaFailure.OUT_OF_STOCK);
 	}
 
-	public void compensateOrder() {
+	public void compensateOrder(){
 		require(canCompensateOrder());
 		changeStepTo(PlaceOrderSagaStep.CANCELLING_ORDER);
 	}
 
-	public void compensateInvoice() {
+	public void compensateInvoice(){
 		require(canCompensateInvoicing());
 		changeStepTo(PlaceOrderSagaStep.CANCELLING_INVOICE);
 	}
@@ -108,26 +109,28 @@ public class PlaceOrderSaga {
 		return this.failure == PlaceOrderSagaFailure.OUT_OF_STOCK;
 	}
 
-    private boolean canEndCompensated() {
-        return isCompensatingAt(PlaceOrderSagaStep.CANCELLING_ORDER);
-    }
+	private boolean canEndCompensated() {
+		return isCompensatingAt(PlaceOrderSagaStep.CANCELLING_ORDER);
+	}
 
 	private boolean canCompensateOrder() {
-        return this.status == SagaStatus.COMPENSATING && this.step.canChangeTo(PlaceOrderSagaStep.CANCELLING_ORDER);
-    }
+		return this.status == SagaStatus.COMPENSATING
+				&& this.step.canChangeTo(PlaceOrderSagaStep.CANCELLING_ORDER);
+	}
 
 	private boolean canCompensateInvoicing() {
-		return this.status == SagaStatus.COMPENSATING && this.step.canChangeTo(PlaceOrderSagaStep.CANCELLING_INVOICE);
+		return this.status == SagaStatus.COMPENSATING
+				&& this.step.canChangeTo(PlaceOrderSagaStep.CANCELLING_INVOICE);
 	}
 
 	private void startCompensation(PlaceOrderSagaFailure failure) {
-        changeStatusTo(SagaStatus.COMPENSATING);
+		changeStatusTo(SagaStatus.COMPENSATING);
 		this.failure = failure;
-    }
+	}
 
 	private boolean canEndSucceeded() {
-        return isRunningAt(PlaceOrderSagaStep.APPROVING_ORDER);
-    }
+		return isRunningAt(PlaceOrderSagaStep.APPROVING_ORDER);
+	}
 
 	public boolean isReservingStock() {
 		return isRunningAt(PlaceOrderSagaStep.RESERVING_STOCK);

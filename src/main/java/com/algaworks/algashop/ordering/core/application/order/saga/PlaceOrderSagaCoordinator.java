@@ -1,6 +1,5 @@
 package com.algaworks.algashop.ordering.core.application.order.saga;
 
-import com.algaworks.algashop.ordering.core.application.OutboundIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.invoice.command.CancelInvoiceIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.invoice.command.IssueInvoiceIntegrationCommand;
 import com.algaworks.algashop.ordering.core.application.order.snapshot.OrderSnapshot;
@@ -20,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Slf4j
 @Service
-@Transactional
+@Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga {
 
 	private final ForStoringPlaceOrderSagas sagas;
@@ -34,7 +33,6 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 	private final ForPublishingPlaceOrderSagaIntegrationCommands commands;
 
 	@Override
-	@Transactional
 	public void start(String rawOrderId) {
 		OrderId orderId = new OrderId(rawOrderId);
 		Order order = findOrder(orderId);
@@ -51,17 +49,15 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 	}
 
 	@Override
-	@Transactional
 	public void onInvoicePaid(UUID sagaId) {
 		PlaceOrderSaga saga = findSaga(sagaId);
 
-		if(saga.isReservingStock() || saga.hasSucceeded()) {
+		if (saga.isReservingStock() || saga.hasSucceeded()) {
 			logIgnored(saga);
 			return;
 		}
 
 		Order order = findOrder(saga.orderId());
-
 		order.markAsPaid();
 		orders.add(order);
 
@@ -75,7 +71,7 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 	public void onStockReservationConfirmed(UUID sagaId) {
 		PlaceOrderSaga saga = findSaga(sagaId);
 
-		if(saga.hasSucceeded()) {
+		if (saga.hasSucceeded()) {
 			logIgnored(saga);
 			return;
 		}
@@ -87,18 +83,19 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 		saga.moveToApprovingOrder();
 		saga.endSucceeded();
 		sagas.add(saga);
+
 	}
 
 	@Override
 	public void onInvoiceCanceled(UUID sagaId) {
 		PlaceOrderSaga saga = findSaga(sagaId);
 
-		if(saga.isCompensated()) {
+		if (saga.isCompensated()) {
 			logIgnored(saga);
 			return;
 		}
 
-		if(!saga.hasFailed()) {
+		if (!saga.hasFailed()) {
 			saga.failWithPaymentRefused();
 		}
 
@@ -116,7 +113,7 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 		PlaceOrderSaga saga = findSaga(sagaId);
 		findOrder(saga.orderId());
 
-		if(saga.wasStockRejected()) {
+		if (saga.wasStockRejected()) {
 			logIgnored(saga);
 			return;
 		}
@@ -126,25 +123,25 @@ public class PlaceOrderSagaCoordinator implements ForCoordinatingPlaceOrderSaga 
 		sagas.add(saga);
 
 		commands.send(saga.sagaId().toString(), new CancelInvoiceIntegrationCommand(saga.orderId().toString()));
-
 	}
 
 	private void logIgnored(PlaceOrderSaga saga) {
-        log.info("Saga reply was ignored: saga={} order={} status={} step={}",
-				saga.sagaId(), saga.orderId(), saga.status(), saga.status());
-    }
+		log.info("Saga reply was ignored: saga={} order={} status={} step{}",
+				saga.sagaId(), saga.orderId(), saga.status(), saga.step());
+	}
 
-	private OutboundIntegrationCommand reserveStockIntegrationCommand(Order order) {
-        return new ReserveStockIntegrationCommand(
+	private ReserveStockIntegrationCommand reserveStockIntegrationCommand(Order order) {
+		return new ReserveStockIntegrationCommand(
 				order.id().toString(),
 				order.items().stream().map(item -> new ReserveStockIntegrationCommand.Item(
 						item.productId().value(), item.quantity().value()
-				)).toList());
-    }
+				)).toList()
+		);
+	}
 
 	private PlaceOrderSaga findSaga(UUID sagaId) {
-        return sagas.ofId(sagaId).orElseThrow(() -> new PlaceOrderSagaNotFoundException(sagaId));
-    }
+		return sagas.ofId(sagaId).orElseThrow(()->new PlaceOrderSagaNotFoundException(sagaId));
+	}
 
 	private Order findOrder(OrderId orderId) {
 		return orders.ofId(orderId).orElseThrow(OrderNotFoundException::new);

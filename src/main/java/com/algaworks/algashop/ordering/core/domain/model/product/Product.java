@@ -30,7 +30,7 @@ public record Product(
     public void checkForQuantity(Quantity quantity) {
         Objects.requireNonNull(quantity);
         checkOutOfStock();
-        if(this.quantityInStock != null && this.quantityInStock().compareTo(quantity) < 0) {
+        if (this.quantityInStock() != null && this.quantityInStock().compareTo(quantity) < 0) {
             throw new InsufficientQuantityException(this.name(), quantity);
         }
     }

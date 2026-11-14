@@ -17,7 +17,8 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReserveStockIntegrationCommand implements OutboundIntegrationCommand {
+public class ReserveStockIntegrationCommand 
+		implements OutboundIntegrationCommand {
 
     @NotBlank
     private String orderId;

@@ -33,7 +33,7 @@ public class ProductTestDataBuilder {
                 .id(new ProductId())
                 .name(new ProductName("4GB RAM"))
                 .price(new Money("200"))
-                .quantityInStock(new Quantity(100))
+                .quantityInStock(new Quantity(50))
                 .inStock(true);
     }
 
@@ -42,7 +42,7 @@ public class ProductTestDataBuilder {
                 .id(new ProductId())
                 .name(new ProductName("Mouse Pad"))
                 .price(new Money("100"))
-                .quantityInStock(new Quantity(100))
+                .quantityInStock(new Quantity(30))
                 .inStock(true);
     }
 

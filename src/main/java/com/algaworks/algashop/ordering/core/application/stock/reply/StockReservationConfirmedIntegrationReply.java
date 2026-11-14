@@ -13,8 +13,8 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StockReservationConfirmedIntegrationReply
-        implements InboundIntegrationReply {
+public class StockReservationConfirmedIntegrationReply 
+		implements InboundIntegrationReply {
 
     @NotNull
     private UUID reservationId;
